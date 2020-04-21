@@ -1,17 +1,11 @@
-This personal website was inspired by GitHub Pages documentation and the following tutorial: [http://jmcglone.com/guides/github-pages/](http://jmcglone.com/guides/github-pages/)
+## [mflounders.github.io](mflounders.github.io)
+This website was templated with GitHub Pages 
 
-___________________________________________
+### Credit to: 
+- GitHub Pages documentation
+- [http://jmcglone.com/guides/github-pages/](http://jmcglone.com/guides/github-pages/)
+- [https://github.com/pages-themes/minimal](https://github.com/pages-themes/minimal)
+- [Adding a them to your GitHub Pages Site using Jekyll](https://help.github.com/en/github/working-with-github-pages/adding-a-theme-to-your-github-pages-site-using-jekyll)
 
-## Welcome to GitHub Pages
-
-You can use the [editor on GitHub](https://github.com/mflounders/mflounders.github.io/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/mflounders/mflounders.github.io/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+If you'd like help creating something like this, I may be able to help. I have made a number of mistakes and tests while curating this site and happy to share any insights. Feel free to email me
+____________________________________________________
