@@ -1,4 +1,6 @@
-## My site was inspired by GitHub Pages documentation and the following tutorial: [http://jmcglone.com/guides/github-pages/](http://jmcglone.com/guides/github-pages/)
+This personal website was inspired by GitHub Pages documentation and the following tutorial: [http://jmcglone.com/guides/github-pages/](http://jmcglone.com/guides/github-pages/)
+
+___________________________________________
 
 ## Welcome to GitHub Pages
 
