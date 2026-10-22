@@ -187,6 +187,9 @@ input[type=range]{accent-color:var(--accent);width:180px;max-width:100%}
 code.f{font-family:var(--f-mono);font-size:13px;background:var(--surface2);padding:2px 6px;border-radius:5px}
 .formula{font-family:var(--f-mono);font-size:13.5px;background:var(--surface2);border-radius:8px;padding:12px 14px;overflow-x:auto}
 .foot{margin-top:28px;font-size:12px;color:var(--muted);max-width:90ch}
+footer.disclaimer{max-width:1180px;margin:0 auto;padding-inline:clamp(16px,3vw,28px);padding-block:16px 32px;border-top:1px solid var(--line)}
+footer.disclaimer p{margin:0;font-size:12.5px;line-height:1.5;color:var(--muted);max-width:90ch}
+footer.disclaimer b{color:var(--ink);font-weight:600}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -201,6 +204,7 @@ code.f{font-family:var(--f-mono);font-size:13px;background:var(--surface2);paddi
   <span class="sync" id="sync">Saved in this browser</span>
 </div></header>
 <main class="wrap" id="app"></main>
+<footer class="disclaimer"><p><b>For learning only.</b> Case vignettes and content are drawn from publicly available literature on the 2026 AHA/ASA stroke guidelines. This tool is not affiliated with or endorsed by the AHA/ASA or any company, and it is not a clinical decision support tool. Use the full guideline and your local protocols in practice.</p></footer>
 
 <script>
 /* ===================== CONTENT ===================== */
