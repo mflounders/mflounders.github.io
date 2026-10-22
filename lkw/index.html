@@ -1,0 +1,1599 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Last Known Well</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: a working "case bench" (scenario left) beside a knowledge perfusion map (right); stacks on phones. */
+:root{
+  --bg:#F1F4F5; --surface:#FFFFFF; --surface2:#E7EDEF; --ink:#12212A; --muted:#566871; --line:#D0DADE;
+  --accent:#0A6A74; --accent-soft:#D5ECEE; --on-accent:#FFFFFF;
+  --core:#BF3B27; --core-soft:#F6DDD8; --penumbra:#B97C0B; --pen-soft:#F5E8C9; --perfused:#11806A; --perf-soft:#D3EEE6; --none:#9AA8AF;
+  --c1:#1C7A3D; --c2a:#9A7700; --c2b:#B5560B; --c3nb:#8C4A2F; --c3h:#B42318; --ckp:#4B5D66;
+  --f-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C1418; --surface:#132028; --surface2:#1A2A33; --ink:#E2EBEE; --muted:#93A6AE; --line:#293A43;
+  --accent:#4DB4BE; --accent-soft:#163A40; --on-accent:#062328;
+  --core:#EE6E56; --core-soft:#3B1E19; --penumbra:#E3AE3F; --pen-soft:#3A2E14; --perfused:#3BC09C; --perf-soft:#123329; --none:#5E6F77;
+  --c1:#4CC27A; --c2a:#E0BC3A; --c2b:#F08A3C; --c3nb:#D08B6C; --c3h:#F26B5B; --ckp:#9AAEB7;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1418; --surface:#132028; --surface2:#1A2A33; --ink:#E2EBEE; --muted:#93A6AE; --line:#293A43;
+  --accent:#4DB4BE; --accent-soft:#163A40; --on-accent:#062328;
+  --core:#EE6E56; --core-soft:#3B1E19; --penumbra:#E3AE3F; --pen-soft:#3A2E14; --perfused:#3BC09C; --perf-soft:#123329; --none:#5E6F77;
+  --c1:#4CC27A; --c2a:#E0BC3A; --c2b:#F08A3C; --c3nb:#D08B6C; --c3h:#F26B5B; --ckp:#9AAEB7;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;margin:0}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:clamp(16px,3vw,28px);padding-block:0 48px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.topin{max-width:1180px;margin:0 auto;padding-inline:clamp(16px,3vw,28px);padding-block:12px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:10px;margin-right:auto;min-width:0}
+.brand b{font-family:var(--f-display);font-weight:700;font-size:22px;letter-spacing:-.01em}
+.brand span{color:var(--muted);font-size:13px}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap}
+nav.tabs button{background:none;border:1px solid transparent;border-radius:999px;padding:6px 14px;cursor:pointer;color:var(--muted);font-weight:500}
+nav.tabs button[aria-selected="true"]{background:var(--surface);border-color:var(--line);color:var(--ink)}
+.sync{font-family:var(--f-mono);font-size:11px;color:var(--muted);letter-spacing:.02em}
+@media (max-width:640px){.brand span,.sync{display:none} .topin{padding-block:8px;gap:8px} header.top{position:static} nav.tabs button{padding:6px 11px}}
+
+.train{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:24px;margin-top:22px;align-items:start}
+@media (max-width:920px){.train{grid-template-columns:minmax(0,1fr)}}
+.case{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:clamp(18px,3vw,30px);min-width:0}
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.chip{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--surface2);color:var(--muted)}
+.chip.tier{background:var(--accent-soft);color:var(--accent)}
+.chip.review{background:var(--pen-soft);color:var(--penumbra)}
+.chip.rem{background:var(--core-soft);color:var(--core)}
+h1.ctitle{font-family:var(--f-display);font-weight:700;font-size:clamp(24px,3.2vw,32px);line-height:1.15;margin:4px 0 12px;text-wrap:balance;letter-spacing:-.015em}
+.vig{font-size:16px;max-width:68ch;margin:0 0 16px}
+.vitals{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin:0 0 20px}
+.vitals div{background:var(--surface2);padding:8px 12px;min-width:0}
+.vitals dt{font-family:var(--f-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.vitals dd{margin:0;font-family:var(--f-mono);font-size:14px;font-weight:500;font-variant-numeric:tabular-nums}
+.stepbar{display:flex;gap:6px;margin:0 0 14px}
+.stepbar i{height:4px;flex:1;border-radius:2px;background:var(--surface2)}
+.stepbar i.done{background:var(--accent)} .stepbar i.bad{background:var(--core)} .stepbar i.now{background:var(--muted)}
+.q{font-weight:600;font-size:16.5px;margin:0 0 12px;max-width:70ch}
+.opts{display:grid;gap:8px;margin:0 0 18px}
+.opt{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:11px 14px;cursor:pointer;line-height:1.45}
+.opt:hover:not([disabled]){border-color:var(--accent)}
+.opt .k{font-family:var(--f-mono);font-size:12px;width:24px;height:24px;border-radius:6px;display:grid;place-items:center;background:var(--surface2);color:var(--muted)}
+.opt[aria-checked="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.opt[aria-checked="true"] .k{background:var(--accent);color:var(--on-accent)}
+.opt.right{border-color:var(--perfused);background:var(--perf-soft)}
+.opt.right .k{background:var(--perfused);color:var(--surface)}
+.opt.wrong{border-color:var(--core);background:var(--core-soft)}
+.opt.wrong .k{background:var(--core);color:var(--surface)}
+.opt[disabled]{cursor:default}
+.opt .why{display:block;font-size:13.5px;color:var(--muted);margin-top:4px}
+.conf{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 16px}
+.conf .lbl{font-size:13px;color:var(--muted);font-weight:500}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex-wrap:wrap}
+.seg button{background:var(--surface);border:0;padding:6px 14px;cursor:pointer;font-size:13.5px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-checked="true"]{background:var(--ink);color:var(--bg)}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{background:var(--accent);color:var(--on-accent);border:0;border-radius:999px;padding:9px 20px;font-weight:600;cursor:pointer}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:var(--core);color:var(--surface)}
+.hint{font-size:12.5px;color:var(--muted)}
+.fb{border-top:1px solid var(--line);margin-top:6px;padding-top:18px;display:grid;gap:14px}
+.verdict{font-family:var(--f-display);font-weight:700;font-size:20px}
+.verdict.ok{color:var(--perfused)} .verdict.no{color:var(--core)}
+.explain{max-width:70ch;margin:0}
+.recs{display:grid;gap:8px}
+.rec{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--surface2);border-radius:8px;padding:10px 12px;font-size:14px}
+.rec .sec{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.cor{font-family:var(--f-mono);font-size:11px;font-weight:500;padding:2px 7px;border-radius:5px;white-space:nowrap;color:var(--surface);letter-spacing:.02em}
+.cor.c1{background:var(--c1)} .cor.c2a{background:var(--c2a)} .cor.c2b{background:var(--c2b)} .cor.c3nb{background:var(--c3nb)} .cor.c3h{background:var(--c3h)} .cor.ckp{background:var(--ckp)}
+.deltas{display:flex;gap:8px;flex-wrap:wrap}
+.delta{font-family:var(--f-mono);font-size:12px;padding:4px 9px;border-radius:6px;background:var(--surface2)}
+.delta .up{color:var(--perfused)} .delta .dn{color:var(--core)}
+.reflect{background:var(--core-soft);border-radius:var(--r);padding:12px 14px}
+.reflect p{margin:0 0 8px;font-weight:600;font-size:14px}
+.reflect .rs{display:flex;flex-wrap:wrap;gap:6px}
+.reflect button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer}
+.reflect button[aria-checked="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+aside.side{display:grid;gap:16px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;min-width:0}
+.panel h2{font-family:var(--f-display);font-size:16px;margin:0 0 4px;font-weight:700}
+.panel .sub{font-size:12.5px;color:var(--muted);margin:0 0 12px}
+.big{display:flex;align-items:baseline;gap:8px}
+.big b{font-family:var(--f-display);font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
+.big span{color:var(--muted);font-size:13px}
+.pmap{display:grid;gap:7px}
+.prow{display:grid;grid-template-columns:minmax(0,1fr) 92px 34px;gap:8px;align-items:center;font-size:12.5px}
+.prow .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track{position:relative;height:9px;border-radius:5px;background:var(--surface2);overflow:hidden}
+.track i{position:absolute;inset:0 auto 0 0;border-radius:5px}
+.track .tick{position:absolute;top:0;bottom:0;width:1px;background:var(--line)}
+.pv{font-family:var(--f-mono);font-size:11.5px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.z-core{background:var(--core)} .z-pen{background:var(--penumbra)} .z-perf{background:var(--perfused)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:10px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.ladder{display:grid;gap:8px}
+.rung{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;align-items:start;font-size:13px}
+.rung .n{font-family:var(--f-mono);font-weight:500;width:28px;height:28px;border-radius:7px;display:grid;place-items:center;background:var(--surface2);color:var(--muted)}
+.rung.open .n{background:var(--accent);color:var(--on-accent)}
+.rung .t{font-weight:600}
+.rung .d{color:var(--muted);font-size:12px}
+.mini{height:4px;background:var(--surface2);border-radius:2px;margin-top:5px;overflow:hidden}
+.mini i{display:block;height:100%;background:var(--accent)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;text-align:left}
+.stats b{display:block;font-family:var(--f-mono);font-size:18px;font-variant-numeric:tabular-nums}
+.stats span{font-size:11.5px;color:var(--muted)}
+
+.page{margin-top:22px;display:grid;gap:20px}
+.page h2.ph{font-family:var(--f-display);font-size:24px;margin:0;letter-spacing:-.01em}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.tile b{display:block;font-family:var(--f-display);font-size:30px;line-height:1.1;font-variant-numeric:tabular-nums}
+.tile span{font-size:12.5px;color:var(--muted)}
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:640px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-family:var(--f-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500}
+td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.pill{font-family:var(--f-mono);font-size:11px;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.pill.core{background:var(--core-soft);color:var(--core)} .pill.pen{background:var(--pen-soft);color:var(--penumbra)} .pill.perf{background:var(--perf-soft);color:var(--perfused)} .pill.none{background:var(--surface2);color:var(--muted)}
+.linkbtn{background:none;border:0;color:var(--accent);cursor:pointer;font-weight:600;padding:0}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media (max-width:820px){.two{grid-template-columns:minmax(0,1fr)}}
+.log{display:grid;gap:10px}
+.logi{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--core);border-radius:10px;padding:10px 14px;font-size:13.5px}
+.logi .m{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.rbar{display:grid;grid-template-columns:minmax(0,1fr) 120px 26px;gap:10px;align-items:center;font-size:13px;margin-bottom:7px}
+.empty{color:var(--muted);font-size:14px;padding:6px 0}
+.gtopic{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.gtopic h3{font-family:var(--f-display);font-size:18px;margin:0 0 2px}
+.gtopic .s{font-family:var(--f-mono);font-size:11px;color:var(--muted);margin-bottom:10px}
+.ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,460px),1fr));gap:14px}
+.note{font-size:13px;color:var(--muted);max-width:80ch}
+.setrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.setrow:last-child{border-bottom:0}
+.setrow p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+input[type=range]{accent-color:var(--accent);width:180px;max-width:100%}
+.switch{width:44px;height:24px;border-radius:999px;border:1px solid var(--line);background:var(--surface2);position:relative;cursor:pointer;padding:0}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--muted);transition:left .15s}
+.switch[aria-checked="true"]{background:var(--accent)}
+.switch[aria-checked="true"]::after{left:22px;background:var(--on-accent)}
+.mainc{display:grid;gap:14px;min-width:0;align-content:start}
+.flash{background:var(--perf-soft);color:var(--perfused);border-radius:12px;padding:10px 16px;font-weight:600;font-size:14px}
+.commit{display:grid;gap:10px;margin:0 0 6px}
+.commit .lbl{font-weight:600;font-size:14px}
+.commit textarea{width:100%;min-height:68px;resize:vertical;border:1.5px solid var(--line);border-radius:var(--r);padding:10px 12px;background:var(--surface);color:var(--ink);font:inherit;line-height:1.45}
+.commit textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.committed{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:8px;padding:8px 12px;margin:0 0 12px;font-size:14px;max-width:70ch}
+.committed .lbl{display:block;font-family:var(--f-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+.committed p{margin:2px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.goalbar{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-top:10px}
+.goalbar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:14px 0 12px}
+.week span{display:grid;gap:4px;justify-items:center;font-family:var(--f-mono);font-size:10.5px;color:var(--muted)}
+.week i{display:block;width:100%;max-width:26px;aspect-ratio:1;border-radius:6px;background:var(--surface2)}
+.week i.part{background:var(--accent-soft);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.week i.met{background:var(--accent)}
+.week span.today{color:var(--ink);font-weight:500}
+.switch[disabled]{opacity:.55;cursor:not-allowed}
+code.f{font-family:var(--f-mono);font-size:13px;background:var(--surface2);padding:2px 6px;border-radius:5px}
+.formula{font-family:var(--f-mono);font-size:13.5px;background:var(--surface2);border-radius:8px;padding:12px 14px;overflow-x:auto}
+.foot{margin-top:28px;font-size:12px;color:var(--muted);max-width:90ch}
+footer.disclaimer{max-width:1180px;margin:0 auto;padding-inline:clamp(16px,3vw,28px);padding-block:16px 32px;border-top:1px solid var(--line)}
+footer.disclaimer p{margin:0;font-size:12.5px;line-height:1.5;color:var(--muted);max-width:90ch}
+footer.disclaimer b{color:var(--ink);font-weight:600}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="top"><div class="topin">
+  <div class="brand"><b>Last Known Well</b><span>2026 AHA/ASA acute ischemic stroke drills</span></div>
+  <nav class="tabs" role="tablist" id="tabs">
+    <button role="tab" data-tab="train" aria-selected="true">Train</button>
+    <button role="tab" data-tab="progress" aria-selected="false">Progress</button>
+    <button role="tab" data-tab="guide" aria-selected="false">Guideline</button>
+    <button role="tab" data-tab="settings" aria-selected="false">Settings</button>
+  </nav>
+  <span class="sync" id="sync">Saved in this browser</span>
+</div></header>
+<main class="wrap" id="app"></main>
+<footer class="disclaimer"><p><b>For learning only.</b> Case vignettes and content are drawn from publicly available literature on the 2026 AHA/ASA stroke guidelines. This tool is not affiliated with or endorsed by the AHA/ASA or any company, and it is not a clinical decision support tool. Use the full guideline and your local protocols in practice.</p></footer>
+
+<script>
+/* ===================== CONTENT ===================== */
+/* Source: Prabhakaran S, et al. 2026 Guideline for the Early Management of Patients With Acute Ischemic Stroke. Stroke. 2026;57:e316–e436.
+   Every recommendation below was checked against the recommendation tables and Tables 3–8 of that document. */
+const TOPICS=[
+ {id:"sys",name:"Systems of care & prehospital",sec:"§2.2–2.9"},
+ {id:"img",name:"Imaging & diagnostics",sec:"§3.2–3.3"},
+ {id:"ivt",name:"IVT decision-making",sec:"§4.6.1, 4.6.5"},
+ {id:"contra",name:"IVT contraindications & complications",sec:"Tables 5, 6, 8"},
+ {id:"agent",name:"Thrombolytic agent & dose",sec:"§4.6.2, 4.6.4, Table 7"},
+ {id:"ext",name:"Extended-window IVT",sec:"§4.6.3, Table 3"},
+ {id:"bridge",name:"IVT + EVT, techniques & adjuncts",sec:"§4.7.1, 4.7.4"},
+ {id:"evta",name:"EVT: anterior LVO",sec:"§4.7.2"},
+ {id:"mevo",name:"EVT: medium/distal vessels",sec:"§4.7.2"},
+ {id:"evtp",name:"EVT: basilar occlusion",sec:"§4.7.3"},
+ {id:"bp",name:"Blood pressure",sec:"§4.3"},
+ {id:"glu",name:"Glucose",sec:"§4.5"},
+ {id:"supp",name:"Oxygen, temperature & positioning",sec:"§4.1, 4.2, 4.4"},
+ {id:"apt",name:"Antiplatelet therapy",sec:"§4.8"},
+ {id:"ac",name:"Anticoagulation",sec:"§4.9"},
+ {id:"unit",name:"Stroke unit care",sec:"§5.1–5.7"},
+ {id:"cx",name:"Edema, surgery & seizures",sec:"§6.1–6.5"},
+ {id:"peds",name:"Pediatric AIS",sec:"§2.3, 2.7, 3.2, 4.6.1, 4.7.5"}
+];
+const TOPIC=Object.fromEntries(TOPICS.map(t=>[t.id,t]));
+const CORLBL={"1":"COR 1","2a":"COR 2a","2b":"COR 2b","3NB":"COR 3: No Benefit","3H":"COR 3: Harm","T8g":"Table 8: benefit likely > risk","T8r":"Table 8: relative contraindication","T8x":"Table 8: absolute contraindication","T":"Guideline table"};
+const CORCLS={"1":"c1","2a":"c2a","2b":"c2b","3NB":"c3nb","3H":"c3h","T8g":"c1","T8r":"c2b","T8x":"c3h","T":"ckp"};
+// [topic, COR, LOE, section, condensed wording]
+const RECS={
+ "sys.msu":["sys","1","A","2.5","Where available, use mobile stroke units over conventional EMS for thrombolytic-eligible patients to achieve the fastest onset-to-treatment time."],
+ "sys.msuEquip":["sys","1","A","2.5","MSUs must be equipped to diagnose and treat patients with IVT."],
+ "sys.msuCare":["sys","1","B-R","2.5","MSU care with streamlined protocols and neurological expertise (in person or by telemedicine) is beneficial without safety concerns."],
+ "sys.msuEvt":["sys","2a","B-NR","2.5","In EVT-eligible patients, MSUs can help triage to the appropriate thrombectomy-capable facility with prenotification of the receiving team."],
+ "sys.ems":["sys","1","A","2.3","EMS should use a brief stroke assessment tool to improve early identification of stroke, including LVO."],
+ "sys.prenotify":["sys","1","B-NR","2.3","EMS should give the receiving hospital advance notification of an inbound suspected stroke."],
+ "sys.ric":["sys","3NB","B-R","2.3","Ambulance-initiated remote ischemic conditioning does not improve functional outcome."],
+ "sys.gtn":["sys","3H","A","2.3","Prehospital transdermal glyceryl trinitrate does not improve outcome and is potentially harmful."],
+ "sys.fieldBp":["sys","3NB","B-R","2.3","Intensive field BP control to SBP 130–140 mm Hg does not improve functional outcome."],
+ "sys.closest":["sys","1","B-NR","2.4","EMS should prioritize transport to the closest appropriate stroke facility (ASRH, PSC, TSC or CSC) over a non-stroke hospital."],
+ "sys.directTsc":["sys","2a","B-NR","2.4","Where a TSC is locally accessible, direct transport of suspected LVO to the TSC can be beneficial."],
+ "sys.poorSys":["sys","2b","B-NR","2.4","Without a well-coordinated system and proficient local hospitals, direct transport of suspected LVO to the closest TSC may be reasonable if it won't disqualify the patient from IVT."],
+ "sys.bypass":["sys","3NB","B-R","2.4","In well-coordinated systems with local hospitals proficient in thrombolysis and transfer, direct transport to a distant (eg, 45–60 min) TSC does not improve 3-month outcomes."],
+ "sys.dido":["sys","1","B-NR","2.4","Hospitals and EMS should establish agreements and protocols that prioritize interhospital transfer to reduce door-in–door-out time (supportive text cites a ≤120-min target)."],
+ "sys.tele":["sys","1","B-R","2.8","Without on-site neurological expertise, telestroke is effective over usual ED care for IVT decision-making and faster delivery."],
+ "sys.telerad":["sys","1","B-NR","2.8","Without in-house imaging expertise, teleradiology is recommended for timely brain imaging review and IVT decision-making."],
+ "img.hemorrhage":["img","1","A","3.2","Obtain emergent brain imaging (NCCT or MRI) to assess ischemic burden (eg, ASPECTS) and exclude hemorrhage before reperfusion."],
+ "img.door25":["img","1","B-NR","3.2","Protocols should allow emergent brain imaging as rapidly as possible (eg, within 25 minutes)."],
+ "img.creat":["img","1","B-NR","3.2","With suspected LVO, contrast CTA and/or CTP should not be delayed to obtain a serum creatinine."],
+ "img.lvo":["img","1","A","3.2","Suspected LVO within 24 h: emergent brain and cervical/intracranial vascular imaging (CT/CTA or MRI/MRA) as rapidly as possible."],
+ "img.ctp624":["img","2a","A","3.2","LVO at 6–24 h: adjunctive CTP, MRI DWI–FLAIR or DWI–PWI with automated software can be useful for EVT evaluation, if immediately available."],
+ "img.dwiflair":["img","2a","B-R","3.2","Wake-up or unknown onset >4.5 h from LKW, otherwise IVT-eligible: MRI DWI–FLAIR mismatch selection can determine extended-window IVT eligibility."],
+ "img.ctp45":["img","2a","B-R","3.2","Wake-up or unknown onset 4.5–24 h from LKW: CTP or MR DWI–PWI with automated software can determine extended-window IVT eligibility."],
+ "img.dtas":["img","2b","B-R","3.2","Suspected LVO by a validated prehospital scale (eg, RACE >4) and EVT-eligible: direct triage to the angiography suite may be considered."],
+ "img.ecg":["img","1","C-LD","3.3","A baseline ECG is recommended but should not delay IVT or EVT."],
+ "img.trop":["img","1","B-NR","3.3","A baseline troponin is recommended but should not delay IVT or EVT."],
+ "ivt.disabling":["ivt","1","A","4.6.1","With disabling deficits, regardless of NIHSS score, and eligible for IVT: faster treatment improves functional outcome."],
+ "ivt.fast":["ivt","1","B-NR","4.6.1","Within 4.5 h, start IVT as quickly as possible, avoiding delays for CTA/MRA or CT/MR perfusion."],
+ "ivt.table4":["ivt","T","—","Table 4","Usually disabling: complete hemianopsia, severe aphasia (≥2 best language), severe neglect/extinction, any weakness limiting sustained effort against gravity. May not be disabling: isolated mild aphasia, isolated facial droop, mild cortical hand weakness, mild hemimotor loss, hemisensory loss, mild hemiataxia."],
+ "ivt.nondisabling":["ivt","3NB","B-R","4.6.1","Mild non-disabling deficits (eg, isolated sensory syndrome) within 4.5 h: IVT is not recommended; it was not superior to dual antiplatelet therapy."],
+ "ivt.glucose":["ivt","1","B-NR","4.6.1","Determine blood glucose before IVT to find and treat severe hypo- or hyperglycemia that can mimic stroke."],
+ "ivt.glucoseMimic":["ivt","1","C-LD","4.6.1","If disabling deficits persist after correcting severe hypo- or hyperglycemia, IVT is recommended."],
+ "ivt.eic":["ivt","1","A","4.6.1","Early ischemic change of mild to moderate extent (other than frank hypodensity) does not preclude IVT; treatment is recommended."],
+ "ivt.antiplatelet":["ivt","1","B-NR","4.6.1","Patients on single or dual antiplatelet therapy who are otherwise eligible should receive IVT, despite a higher sICH risk."],
+ "ivt.noLabs":["ivt","2a","B-NR","4.6.1","It is reasonable not to delay IVT for hematologic or coagulation testing when there is no reason to suspect an abnormal result."],
+ "ivt.cmbUnknown":["ivt","1","B-NR","4.6.1","With unknown microbleed burden, give IVT without first obtaining MRI to exclude CMBs."],
+ "ivt.cmbFew":["ivt","2a","B-NR","4.6.1","A small number (eg, 1–10) of CMBs on MRI: IVT is reasonable."],
+ "ivt.cmbMany":["ivt","2b","B-NR","4.6.1","A high burden (eg, >10) of CMBs on prior MRI: usefulness of IVT is uncertain."],
+ "ivt.sickle":["ivt","2a","B-NR","4.6.5","Known sickle cell disease: IVT can be beneficial without excess sICH or systemic hemorrhage."],
+ "ivt.crao":["ivt","2b","C-LD","4.6.5","Acute nonarteritic central retinal artery occlusion with disabling vision loss: usefulness of IVT within 4.5 h is uncertain."],
+ "contra.doac":["contra","T8r","—","Table 8","DOAC within 48 h with disabling symptoms: safety unknown; IVT may be considered after an individual benefit–risk analysis (last dose timing, renal function, severity, EVT availability, reversal agents and specific assays) without undue delay."],
+ "contra.coag":["contra","T8x","—","Table 8","Platelets <100 000/mm³, INR >1.7, aPTT >40 s or PT >15 s: do not give IVT. Without recent warfarin or heparin, IVT can start before coagulation results but should stop if INR >1.7 or PT/PTT is abnormal."],
+ "contra.ichHypo":["contra","T8x","—","Table 8","Do not give IVT with acute hemorrhage on imaging, or extensive clear hypodensity explaining the deficit."],
+ "contra.neurosurg":["contra","T8x","—","Table 8","Intracranial or spinal surgery within 14 days: IVT is potentially harmful and should not be given (14 days–3 months: may be considered individually)."],
+ "contra.tbi":["contra","T8x","—","Table 8","Moderate–severe TBI within 14 days (>30 min unconsciousness and GCS <13, or hemorrhage, contusion or fracture on imaging): IVT likely contraindicated."],
+ "contra.other":["contra","T8x","—","Table 8","Also contraindicated: intra-axial intracranial neoplasm, infective endocarditis, known or suspected aortic arch dissection, acute spinal cord injury within 3 months, amyloid immunotherapy or ARIA."],
+ "contra.relative":["contra","T8r","—","Table 8","Relative (individualize, with specialist input): ischemic stroke within 3 months, prior ICH, major non-CNS trauma within 14 days, major non-CNS surgery within 10 days, GI/GU bleeding within 21 days, recent STEMI, pregnancy."],
+ "contra.favor":["contra","T8g","—","Table 8","Benefit generally exceeds risk: extracranial cervical dissection, extra-axial neoplasm, unruptured intracranial aneurysm, remote GI/GU bleeding or MI, recreational drug use, possible stroke mimic, moyamoya."],
+ "contra.sich":["contra","T","—","Table 5","sICH within 24 h of IVT: stop alteplase; CBC, PT/INR, aPTT, fibrinogen, type and cross; emergent NCCT; cryoprecipitate 10 U (target fibrinogen ≥150 mg/dL); tranexamic acid 1000 mg IV over 10 min (or ε-aminocaproic acid); hematology and neurosurgery."],
+ "contra.angioedema":["contra","T","—","Table 6","Orolingual angioedema: protect the airway (intubation may be unneeded if limited to anterior tongue and lips); stop alteplase and hold ACE inhibitors; methylprednisolone 125 mg, diphenhydramine 50 mg, ranitidine or famotidine IV; epinephrine if progressing; consider icatibant or C1 esterase inhibitor."],
+ "agent.choice":["agent","1","A","4.6.2","Within 4.5 h: tenecteplase 0.25 mg/kg (max 25 mg) or alteplase 0.9 mg/kg (max 90 mg) is recommended."],
+ "agent.tnk04":["agent","3NB","A","4.6.2","Tenecteplase 0.4 mg/kg is not recommended."],
+ "agent.table7":["agent","T","—","Table 7","TNK single push by weight: <60 kg 15 mg; 60–<70 kg 17.5 mg; 70–<80 kg 20 mg; 80–<90 kg 22.5 mg; ≥90 kg 25 mg. Alteplase: 10% bolus over 1 min, rest over 60 min. Don't delay to weigh the patient."],
+ "agent.monitor":["agent","T","—","Table 7","After IVT: BP and neuro checks every 15 min for 2 h, every 30 min for 6 h, then hourly to 24 h; follow-up CT or MRI at 24 h before starting anticoagulants or antiplatelets."],
+ "agent.other":["agent","2b","B-R","4.6.4","Not undergoing EVT, within 4.5 h: reteplase or mutant prourokinase may be considered instead of alteplase."],
+ "agent.strepto":["agent","3H","A","4.6.4","IV streptokinase should not be given (no benefit, higher early mortality); desmoteplase and sonothrombolysis are 3: No Benefit."],
+ "ext.unknown45":["ext","2a","B-R","4.6.3","Unknown onset, within 4.5 h of symptom recognition, DWI lesion <⅓ MCA territory and no marked FLAIR change: IVT can be beneficial."],
+ "ext.perfusion":["ext","2a","B-R","4.6.3","Not eligible for EVT, salvageable penumbra on automated perfusion, and waking within 9 h of the sleep midpoint or 4.5–9 h from LKW: IVT can be beneficial."],
+ "ext.lvoNoEvt":["ext","2b","B-R","4.6.3","LVO with salvageable penumbra 4.5–24 h from onset/LKW who cannot receive EVT: IVT directed by thrombolysis experts may be beneficial."],
+ "ext.table3":["ext","T","—","Table 3","Perfusion trials required a core <70 mL and penumbra:core ratio >1.2 (EXTEND) or >1.8 (TRACE-III, TIMELESS); DWI–FLAIR trials required a DWI lesion with no visible FLAIR change."],
+ "bridge.ivtFirst":["bridge","1","A","4.7.1","Eligible for both IVT and EVT: give IVT as rapidly as possible, without observing for clinical response or delaying EVT."],
+ "bridge.argatroban":["bridge","3NB","A","4.9","Argatroban as an adjunct to IVT is not effective."],
+ "bridge.eptifibatide":["bridge","3NB","B-R","4.8","IV eptifibatide as an adjunct to IVT is not recommended."],
+ "bridge.tirofiban":["bridge","3NB","B-R","4.7.4","Preoperative tirofiban before EVT does not improve 90-day outcome."],
+ "bridge.technique":["bridge","1","A","4.7.4","Use stent retrievers, contact aspiration or combined techniques, aiming for eTICI 2b/2c/3 as early as possible."],
+ "bridge.anesthesia":["bridge","1","B-R","4.7.4","Either general anesthesia or procedural sedation is recommended to facilitate EVT."],
+ "bridge.iaLysis":["bridge","2b","B-R","4.7.4","After mTICI ≥2b, adjunctive intra-arterial urokinase, alteplase or tenecteplase may be reasonable."],
+ "evta.early":["evta","1","A","4.7.2","0–6 h, ICA or M1, NIHSS ≥6, prestroke mRS 0–1, ASPECTS 3–10: EVT is recommended."],
+ "evta.late6":["evta","1","A","4.7.2","6–24 h, ICA or M1, NIHSS ≥6, prestroke mRS 0–1, ASPECTS ≥6: EVT is recommended."],
+ "evta.lateCore":["evta","1","A","4.7.2","6–24 h, selected patients, age <80, NIHSS ≥6, mRS 0–1, ASPECTS 3–5, no significant mass effect: EVT is recommended."],
+ "evta.core02":["evta","2a","B-R","4.7.2","0–6 h, selected patients, age <80, NIHSS ≥6, mRS 0–1, ASPECTS 0–2, no significant mass effect: EVT is reasonable."],
+ "evta.mrs2":["evta","2a","B-NR","4.7.2","0–6 h, NIHSS ≥6, ASPECTS ≥6, prestroke mRS 2: EVT is reasonable."],
+ "evta.mrs34":["evta","2b","B-NR","4.7.2","0–6 h, NIHSS ≥6, ASPECTS ≥6, prestroke mRS 3–4: EVT might be reasonable."],
+ "mevo.m2":["mevo","2a","B-NR","4.7.2","Dominant proximal M2, 0–6 h, mRS 0–1, NIHSS ≥6, ASPECTS ≥6: EVT is reasonable, but benefits are uncertain."],
+ "mevo.distal":["mevo","3NB","A","4.7.2","Nondominant or codominant proximal M2, distal MCA, ACA or PCA occlusion: EVT is not recommended."],
+ "evtp.basilar":["evtp","1","A","4.7.3","Basilar occlusion, mRS 0–1, NIHSS ≥10, PC-ASPECTS ≥6: EVT within 24 h of onset is recommended."],
+ "evtp.mild":["evtp","2b","B-R","4.7.3","Basilar occlusion, mRS 0–1, NIHSS 6–9, PC-ASPECTS ≥6: effectiveness of EVT within 24 h is not well established."],
+ "bp.hypotension":["bp","1","C-LD","4.3","Correct hypotension and hypovolemia to maintain systemic perfusion."],
+ "bp.comorbid":["bp","1","C-EO","4.3","Treat hypertension early when a comorbid condition requires it (ACS, acute heart failure, aortic dissection, post-thrombolysis sICH, preeclampsia/eclampsia)."],
+ "bp.over220":["bp","2b","C-EO","4.3","No IVT/EVT, no comorbid indication, BP ≥220/120: benefit of starting or restarting treatment in the first 48–72 h is uncertain."],
+ "bp.noReperf":["bp","3NB","A","4.3","No IVT/EVT, no comorbid indication, BP <220/120: starting or restarting treatment in the first 48–72 h does not prevent death or dependency."],
+ "bp.preIvt":["bp","1","B-NR","4.3","Lower BP to <185/110 mm Hg before starting IVT."],
+ "bp.preEvt":["bp","2a","B-NR","4.3","EVT planned without IVT: maintaining BP ≤185/110 mm Hg before the procedure is reasonable."],
+ "bp.postIvt":["bp","1","B-R","4.3","Maintain BP <180/105 mm Hg for at least 24 h after IVT."],
+ "bp.ivt140":["bp","3NB","B-R","4.3","After IVT in mild–moderate AIS, intensive SBP lowering to <140 (vs <180) mm Hg does not improve functional outcome."],
+ "bp.periEvt":["bp","2a","B-NR","4.3","Maintaining BP ≤180/105 mm Hg during and for 24 h after EVT is reasonable."],
+ "bp.evt140":["bp","3H","A","4.3","After successful EVT of an anterior circulation LVO (mTICI 2b–3), an SBP target <140 mm Hg for 72 h is harmful."],
+ "glu.hypo":["glu","1","C-LD","4.5","Treat hypoglycemia (<60 mg/dL)."],
+ "glu.target":["glu","2a","C-LD","4.5","Treat persistent hyperglycemia to 140–180 mg/dL with close monitoring."],
+ "glu.intensive":["glu","3NB","A","4.5","IV insulin to 80–130 mg/dL does not improve 3-month outcome and is not recommended."],
+ "supp.airway":["supp","1","C-LD","4.1","Provide airway and ventilatory support for decreased consciousness or bulbar dysfunction."],
+ "supp.spo2":["supp","1","C-LD","4.1","With hypoxia, give supplemental oxygen to keep SpO₂ >94%."],
+ "supp.noO2":["supp","3NB","B-R","4.1","Without hypoxia and ineligible for EVT, supplemental oxygen does not improve outcome."],
+ "supp.nbo":["supp","2b","B-R","4.1","Within 6 h, NIHSS 10–20, ASPECTS ≥6, M1/carotid-terminus LVO with planned EVT: normobaric hyperoxia before EVT may be reasonable."],
+ "supp.head":["supp","3NB","B-R","4.2","Routine 0° head positioning (vs 30°) for 24 h does not improve outcome."],
+ "supp.fever":["supp","1","B-R","4.4","With hyperthermia, target normothermia (including nurse-initiated fever protocols)."],
+ "supp.feverSource":["supp","1","C-EO","4.4","Identify and treat sources of hyperthermia such as infection."],
+ "supp.hypothermia":["supp","3NB","B-R","4.4","In normothermic patients, induced hypothermia or prophylactic fever prevention is not recommended."],
+ "apt.aspirin":["apt","1","A","4.8","Give aspirin within 48 h of stroke onset."],
+ "apt.postIvt":["apt","2b","B-NR","4.8","Antiplatelet therapy in the first 24 h after IVT has uncertain risk; it might be considered when a concomitant condition makes it clearly beneficial or withholding it clearly risky."],
+ "apt.substitute":["apt","3H","B-R","4.8","Aspirin is not a substitute for IVT or EVT in eligible patients."],
+ "apt.ivAspirin":["apt","3H","B-R","4.8","Do not give IV aspirin during or within 90 min after starting IVT."],
+ "apt.minor":["apt","1","A","4.8","Minor noncardioembolic stroke (NIHSS ≤3) or high-risk TIA (ABCD2 ≥4), no IVT: start aspirin + clopidogrel (with clopidogrel load) within 24 h for 21 days, then SAPT."],
+ "apt.inspires":["apt","2a","B-R","4.8","NIHSS ≤5 or ABCD2 ≥4 at 24–72 h (or NIHSS 4–5 within 24 h), no IVT, presumed atherosclerosis with ≥50% stenosis: aspirin + clopidogrel for 21 days, then SAPT, is reasonable."],
+ "apt.thales":["apt","2b","B-R","4.8","Within 24 h, NIHSS ≤5 or high-risk TIA, no IVT: ticagrelor + aspirin for 30 days may be considered."],
+ "apt.cyp":["apt","2b","B-R","4.8","CYP2C19 loss-of-function carriers, NIHSS ≤3 or ABCD2 ≥4 within 24 h, no IVT: ticagrelor + aspirin for 21 days may be reasonable in preference to clopidogrel + aspirin."],
+ "apt.triple":["apt","3H","B-R","4.8","Triple antiplatelet therapy (aspirin, clopidogrel, dipyridamole) should not be given."],
+ "apt.afAdd":["apt","3H","B-NR","4.8","AF without active CAD or recent stent: routinely adding antiplatelet therapy to oral anticoagulation is potentially harmful."],
+ "apt.dissection":["apt","2a","B-R","4.8","Extracranial carotid or vertebral dissection: antiplatelet or anticoagulant therapy for at least 3 months is reasonable."],
+ "ac.early":["ac","2a","A","4.9","Carefully selected (eg, milder) AF-related stroke: early oral anticoagulation is low risk and reasonable compared with delayed, though efficacy for early recurrence is not established."],
+ "ac.urgent":["ac","3NB","A","4.9","Early anticoagulation within 48 h does not reduce early neurological worsening or improve outcome and is not recommended."],
+ "ac.ht":["ac","2b","C-LD","4.9","With hemorrhagic transformation, starting or continuing anticoagulation may be considered depending on the scenario and indication."],
+ "unit.strokeUnit":["unit","1","B-R","5.1","Treat in an organized inpatient stroke unit with standardized order sets and protocols."],
+ "unit.dysScreen":["unit","1","C-EO","5.2","Perform a bedside swallow screen before any liquid or food intake."],
+ "unit.instrumental":["unit","2a","B-NR","5.2","If the bedside screen is failed or can't be done, an instrumental assessment (FEES or videofluoroscopy) is reasonable."],
+ "unit.pes":["unit","2b","B-R","5.2","Non-tracheostomized patients with dysphagia: pharyngeal electrical stimulation may be reasonable to improve swallowing (2a after ventilator weaning in tracheotomized patients)."],
+ "unit.enteral":["unit","1","B-R","5.3","Start enteral diet within 7 days of admission."],
+ "unit.ngPeg":["unit","2a","B-NR","5.3","With dysphagia, nasogastric feeding for the first 7 days is reasonable; gastrostomy if inability to swallow is expected beyond 2–3 weeks."],
+ "unit.ipc":["unit","1","B-R","5.4","Impaired mobility: intermittent pneumatic compression plus routine care is recommended."],
+ "unit.sqHeparin":["unit","2a","B-R","5.4","Impaired mobility: prophylactic-dose subcutaneous UFH or LMWH is reasonable to reduce VTE."],
+ "unit.stockings":["unit","3H","B-R","5.4","Elastic compression stockings cause harm (skin breakdown, ulceration, necrosis)."],
+ "unit.depression":["unit","1","B-NR","5.5","Screen routinely for post-stroke depression with a structured inventory; treat when diagnosed (COR 1, B-R)."],
+ "unit.abx":["unit","3NB","A","5.6","Routine prophylactic antibiotics do not improve functional outcome."],
+ "unit.foley":["unit","3H","C-LD","5.6","Do not routinely place indwelling bladder catheters."],
+ "unit.earlyMob":["unit","3H","B-R","5.7","High-dose, very early mobilization within 24 h is not recommended and may be harmful."],
+ "unit.ssri":["unit","3NB","A","5.7","SSRIs do not improve motor recovery or functional status."],
+ "cx.discuss":["cx","1","C-EO","6.1","Large cerebral or cerebellar infarction at risk of swelling: hold early goals-of-care discussions with patient and family."],
+ "cx.transfer":["cx","1","C-LD","6.1","At increased risk of malignant swelling: early transfer to a center with neurosurgical and critical care expertise."],
+ "cx.osmotic":["cx","2a","C-LD","6.2","Neurological decline from swelling: osmotic therapy as a bridge to surgery is reasonable."],
+ "cx.glib":["cx","3NB","B-R","6.2","Large hemispheric infarction, age 18–70: IV glibenclamide does not improve outcome."],
+ "cx.steroids":["cx","3H","C-LD","6.2","Do not use hypothermia, barbiturates or corticosteroids to treat ischemic brain swelling."],
+ "cx.locTrigger":["cx","2a","B-NR","6.3","Decreased consciousness from swelling is a reasonable trigger for hemicraniectomy selection."],
+ "cx.dc60":["cx","1","A","6.3","Age ≤60, unilateral MCA infarction, deterioration within 48 h despite medical therapy: decompressive craniectomy with dural expansion is beneficial."],
+ "cx.dcOld":["cx","2b","B-R","6.3","Age >60, same circumstances: decompressive craniectomy may be considered to reduce mortality."],
+ "cx.dcIvt":["cx","2b","B-NR","6.3","After IV tPA, early craniectomy within 48 h for malignant edema may still be considered."],
+ "cx.cerebHydro":["cx","1","C-LD","6.4","Cerebellar infarction with obstructive hydrocephalus: ventriculostomy is recommended."],
+ "cx.cerebDC":["cx","1","B-NR","6.4","Cerebellar infarction with deterioration from brainstem compression, or volume ≥35 mL: suboccipital decompressive craniectomy with dural expansion."],
+ "cx.szTreat":["cx","1","C-LD","6.5","After an unprovoked seizure, antiseizure medication is recommended, tailored to the patient."],
+ "cx.szProph":["cx","3NB","C-LD","6.5","Prophylactic antiseizure medication is not recommended."],
+ "peds.tools":["peds","2b","B-NR","2.3","Adult prehospital stroke screens perform poorly in children; newer pediatric tools are reliable but of unknown prehospital usefulness."],
+ "peds.suspect":["peds","1","C-EO","2.7","Suspect acute stroke in children with sudden, ongoing focal deficits, including first-time seizure."],
+ "peds.mri":["peds","2a","C-LD","3.2","Suspected pediatric AIS: emergent MRI/MRA of cervical and intracranial vessels is reasonable."],
+ "peds.ct":["peds","2a","C-LD","3.2","If MRI/MRA is not available within 25 minutes, CT/CTA is reasonable."],
+ "peds.ivt":["peds","2b","C-LD","4.6.1","Age 28 days–18 years, confirmed AIS, within 4.5 h, disabling deficits: alteplase may be considered (safe; efficacy uncertain)."],
+ "peds.evt6":["peds","2a","B-NR","4.7.5","Age ≥6 y, LVO, within 6 h: EVT by experienced neurointerventionalists can be effective."],
+ "peds.evtLate":["peds","2a","B-NR","4.7.5","Age ≥6 y, LVO, 6–24 h with potentially salvageable tissue: EVT can be effective."],
+ "peds.evtYoung":["peds","2b","B-NR","4.7.5","Age 28 days–6 y, LVO (including presentation with first-time seizure), within 24 h, salvageable tissue: EVT by pediatric-experienced neurointerventionalists may be reasonable."]
+};
+const GIA={
+ ext:[["Extending the Treatment Window for Thrombolysis","10.1161/STROKEAHA.125.053826"]],
+ sys:[["Flight of the Mobile Stroke Unit","10.1161/STROKEAHA.125.053830"]],
+ evta:[["Getting to the (Large) Core of the (T)Issue","10.1161/STROKEAHA.125.053822"]],
+ apt:[["Dual Antiplatelet Therapy for Nondisabling Stroke Within the 4.5-Hour Window","10.1161/STROKEAHA.125.053825"]],
+ ivt:[["Dual Antiplatelet Therapy for Nondisabling Stroke Within the 4.5-Hour Window","10.1161/STROKEAHA.125.053825"]],
+ peds:[["Pediatric AIS Treatments (Thrombolysis and Thrombectomy)","10.1161/STROKEAHA.125.053829"]],
+ evtp:[["Basilar Artery Occlusion and Thrombectomy","10.1161/STROKEAHA.125.054180"]],
+ bp:[["General Supportive Early Management: Blood Pressure and Glucose","10.1161/STROKEAHA.125.053824"],["Blood Pressure Management After Endovascular Therapy","10.1161/STROKEAHA.125.053502"],["Perfusion-Dependent Severe Basilar Artery Stenosis","10.1161/STROKEAHA.125.053503"]],
+ glu:[["General Supportive Early Management: Blood Pressure and Glucose","10.1161/STROKEAHA.125.053824"]]
+};
+
+/* Items: tier 1 = one guideline, direct; 2 = one guideline, applied nuance; 3 = two guidelines interacting; 4 = full multi-guideline pathway.
+   Option arrays: [text, why]. Correct option is index a (default 0); display order is shuffled. */
+const ITEMS=[
+/* ---------- TIER 1 ---------- */
+{id:"agent-regimen",tier:1,title:"Choosing the thrombolytic",topics:["agent"],
+ vig:"A 66-year-old man has right hemiparesis and aphasia. CT shows no hemorrhage. He meets IV thrombolysis criteria, and your center stocks both tenecteplase and alteplase.",
+ vit:[["LKW","95 min"],["NIHSS","14"],["BP","168/92"],["Glucose","132 mg/dL"]],
+ q:"Which regimen matches the 2026 guideline?",
+ o:[["Tenecteplase 0.25 mg/kg (max 25 mg) as a single IV push",""],
+    ["Tenecteplase 0.4 mg/kg for a severe deficit","0.4 mg/kg is Class 3: No Benefit; it added no benefit and more sICH."],
+    ["Alteplase 0.9 mg/kg with the full dose given as a bolus","Alteplase is 10% as a bolus over 1 min and the rest over 60 min."],
+    ["Tenecteplase at the cardiac (STEMI) dose","The STEMI dose is roughly double the stroke dose."]],
+ x:"Tenecteplase 0.25 mg/kg (max 25 mg) and alteplase 0.9 mg/kg (max 90 mg) are co-equal Class 1 choices within 4.5 h.",refs:["agent.choice","agent.tnk04"]},
+{id:"agent-band",tier:1,title:"Dosing by the band",topics:["agent"],
+ vig:"An 88-kg woman with a disabling left MCA syndrome is eligible for tenecteplase. Your pharmacist prepares the dose from the guideline's weight-band table.",
+ vit:[["Weight","88 kg"],["LKW","2 h"],["NIHSS","12"]],
+ q:"What dose and volume?",
+ o:[["22.5 mg (4.5 mL)",""],
+    ["22 mg, calculated exactly at 0.25 mg/kg","Table 7 uses weight bands; 80 to <90 kg is 22.5 mg."],
+    ["25 mg (5 mL), the maximum","25 mg is the ≥90 kg band."],
+    ["20 mg (4 mL)","20 mg is the 70 to <80 kg band."]],
+ x:"Table 7 bands: <60 kg 15 mg; 60–<70 kg 17.5 mg; 70–<80 kg 20 mg; 80–<90 kg 22.5 mg; ≥90 kg 25 mg. If weight must be estimated, don't delay treatment to weigh.",refs:["agent.table7","agent.choice"]},
+{id:"agent-alteplase",tier:1,title:"Alteplase arithmetic",topics:["agent"],
+ vig:"Tenecteplase is on backorder. A 70-kg woman with a disabling left MCA syndrome is eligible for IVT at 2 h from onset.",
+ vit:[["LKW","2 h"],["Weight","70 kg"],["NIHSS","11"]],
+ q:"How should alteplase be given?",
+ o:[["63 mg total: 6.3 mg IV bolus over 1 min, then 56.7 mg over 60 min",""],
+    ["70 mg total: 7 mg bolus, then 63 mg over 60 min","That is 1 mg/kg. The stroke dose is 0.9 mg/kg."],
+    ["63 mg total as a single bolus","Only 10% goes as a bolus."],
+    ["90 mg total, the stroke maximum, for every adult","90 mg is the cap, reached at 100 kg."]],
+ x:"0.9 mg/kg × 70 kg = 63 mg: 10% as a 1-minute bolus, the rest over 60 minutes, maximum 90 mg.",refs:["agent.choice","agent.table7"]},
+{id:"ivt-nondisabling",tier:1,title:"A numb hand at 90 minutes",topics:["ivt","apt"],
+ vig:"A 61-year-old accountant has numbness of the right face and hand that began 90 minutes ago. Strength, language, vision and coordination are normal. He can type and write normally. CT is unremarkable and CTA shows no occlusion.",
+ vit:[["LKW","90 min"],["NIHSS","1 (sensory)"],["BP","154/88"],["Glucose","104 mg/dL"]],
+ q:"What is the best acute treatment?",
+ o:[["Aspirin plus clopidogrel, without thrombolysis",""],
+    ["Tenecteplase, because he is inside 4.5 hours","IVT for mild non-disabling deficits is Class 3: No Benefit; it was not superior to DAPT."],
+    ["CT perfusion first, then IVT if a penumbra is present","Perfusion imaging does not make a non-disabling deficit thrombolysis-eligible."],
+    ["No antithrombotic for 24 hours, then aspirin","Without IVT, start DAPT within 24 h to lower early recurrence."]],
+ x:"Hemisensory loss is listed in Table 4 as often not disabling. IVT is not recommended for mild non-disabling deficits; DAPT for 21 days is the Class 1 alternative for NIHSS ≤3.",refs:["ivt.nondisabling","ivt.table4","apt.minor"]},
+{id:"ivt-disabling",tier:1,title:"Low score, high stakes",topics:["ivt"],
+ vig:"A 54-year-old schoolteacher developed word-finding difficulty and paraphasic errors 2 hours ago. She cannot follow a multistep conversation and says she could not teach today. CT shows no hemorrhage.",
+ vit:[["LKW","2 h"],["NIHSS","2 (best language 2)"],["BP","162/90"],["Glucose","118 mg/dL"]],
+ q:"What next?",
+ o:[["Give IVT now; the deficit is disabling despite the low NIHSS",""],
+    ["DAPT, because NIHSS ≤5 is a minor stroke","NIHSS doesn't define disability; severe aphasia (≥2 on best language) is listed as clearly disabling."],
+    ["CT perfusion first to confirm salvageable tissue","Within 4.5 h, advanced imaging should not delay IVT."],
+    ["Observe for 30 minutes to see whether she improves","Faster treatment improves outcome."]],
+ x:"Table 4 lists severe aphasia (≥2 on NIHSS best language) as typically disabling. For disabling deficits regardless of NIHSS, faster IVT improves outcome (COR 1, LOE A).",refs:["ivt.disabling","ivt.table4","ivt.fast"]},
+{id:"ivt-eic",tier:1,title:"An early CT sign",topics:["ivt"],
+ vig:"A 70-year-old has a disabling left MCA syndrome at 2 h. CT shows subtle loss of the left insular ribbon (ASPECTS 8) without frank hypodensity.",
+ vit:[["LKW","2 h"],["NIHSS","13"],["ASPECTS","8"]],
+ q:"Does the CT change the IVT decision?",
+ o:[["No; mild to moderate early ischemic change does not preclude IVT, which is recommended",""],
+    ["Yes; any early ischemic change is a contraindication","Only extensive clear hypodensity explaining the deficit is a contraindication."],
+    ["Yes; get MRI to confirm the lesion before treating","This delays treatment without changing eligibility."],
+    ["Yes; use half-dose tenecteplase","There is no reduced-dose recommendation for early ischemic change."]],
+ x:"IVT is recommended despite mild-to-moderate early ischemic change (COR 1, LOE A). Extensive clear hypodensity is an absolute contraindication.",refs:["ivt.eic","contra.ichHypo"]},
+{id:"ivt-antiplatelet",tier:1,title:"Already on two antiplatelets",topics:["ivt"],
+ vig:"A 67-year-old with a coronary stent placed 5 months ago takes aspirin and clopidogrel. He has a disabling right hemiparesis at 1.5 h. CT is negative.",
+ vit:[["LKW","1.5 h"],["NIHSS","10"],["Meds","aspirin + clopidogrel"]],
+ q:"IVT?",
+ o:[["Give IVT; prior antiplatelet use does not exclude it",""],
+    ["Withhold IVT because of DAPT","Patients on single or dual antiplatelets should receive IVT despite a higher sICH risk (COR 1)."],
+    ["Give a platelet transfusion first, then IVT","Not recommended and delays treatment."],
+    ["Check platelet function testing first","Not required and delays treatment."]],
+ x:"Otherwise-eligible patients taking single or dual antiplatelet therapy should receive IVT, accepting a higher sICH risk.",refs:["ivt.antiplatelet"]},
+{id:"ivt-cmb",tier:1,title:"What about microbleeds?",topics:["ivt"],
+ vig:"An 76-year-old with hypertension has a disabling stroke at 2 h. CT is negative. A resident asks for an MRI first to count microbleeds, since she has never had one.",
+ vit:[["LKW","2 h"],["NIHSS","9"],["Prior MRI","none"]],
+ q:"Your decision?",
+ o:[["Give IVT without first obtaining MRI",""],
+    ["Get MRI first; more than 10 microbleeds would change the decision","With unknown microbleed burden, don't delay IVT for MRI (COR 1)."],
+    ["Give half-dose alteplase because of the bleeding risk","Not a recommended strategy."],
+    ["Withhold IVT because elderly hypertensive patients have many microbleeds","Unknown burden is not a contraindication."]],
+ x:"With unknown CMB burden, IVT should be given without first obtaining MRI. A known high burden (>10) makes usefulness uncertain (2b); 1–10 is reasonable (2a).",refs:["ivt.cmbUnknown","ivt.cmbFew","ivt.cmbMany"]},
+{id:"img-creatinine",tier:1,title:"Waiting on the lab",topics:["img"],
+ vig:"A 77-year-old man with chronic kidney disease arrives 3 h after sudden left hemiplegia and right gaze deviation. CT shows no hemorrhage. The technologist asks whether to hold the CTA until the creatinine results, about 40 minutes away.",
+ vit:[["LKW","3 h"],["NIHSS","19"],["eGFR (last)","41"]],
+ q:"Your answer?",
+ o:[["Proceed with CTA now",""],
+    ["Hold the CTA until creatinine results","CTA/CTP should not be delayed for creatinine (COR 1)."],
+    ["Switch to MRA to avoid contrast, even though it adds 45 minutes","Vascular imaging should be done as rapidly as possible."],
+    ["Skip vascular imaging and treat with IVT alone","Suspected LVO within 24 h needs vascular imaging to select EVT."]],
+ x:"In suspected LVO, contrast CTA and/or CTP should not wait for a creatinine, and brain plus vascular imaging should be done as rapidly as possible.",refs:["img.creat","img.lvo"]},
+{id:"img-ecg",tier:1,title:"Troponin pending",topics:["img","ivt"],
+ vig:"An eligible patient with a disabling deficit is 2 h from onset; tenecteplase is drawn up. He went straight from the ambulance to CT, so no ECG has been done and the troponin is pending. He takes no anticoagulants and has no known bleeding disorder.",
+ vit:[["LKW","2 h"],["NIHSS","12"],["Glucose","141 mg/dL"]],
+ q:"What do you do?",
+ o:[["Give tenecteplase now; obtain the ECG and troponin without delaying treatment",""],
+    ["Wait for the troponin to exclude MI first","Troponin is recommended but should not delay IVT."],
+    ["Get the ECG first and treat only if there is no ST elevation","The ECG is recommended but should not delay IVT."],
+    ["Hold IVT until the platelet count and INR are back","With no reason to suspect an abnormal result, don't delay IVT for these tests (2a)."]],
+ x:"ECG (COR 1, C-LD) and troponin (COR 1, B-NR) are recommended but should not delay IVT. Glucose is the test that must precede IVT.",refs:["img.ecg","img.trop","ivt.noLabs","ivt.glucose"]},
+{id:"glu-target",tier:1,title:"Insulin drip target",topics:["glu"],
+ vig:"Day 1 after a right MCA stroke in a man with type 2 diabetes. Glucose readings run 250–280 mg/dL. The ICU's general insulin protocol targets 80–130 mg/dL.",
+ vit:[["Glucose","250–280"],["HbA1c","9.1%"]],
+ q:"What glucose target should you order?",
+ o:[["140–180 mg/dL",""],
+    ["80–130 mg/dL, per the ICU protocol","IV insulin to 80–130 is Class 3: No Benefit (LOE A) and increases severe hypoglycemia."],
+    ["Below 250 mg/dL with sliding-scale insulin only","Persistent hyperglycemia should be treated to 140–180."],
+    ["No treatment unless above 300 mg/dL","Persistent hyperglycemia is linked to worse outcomes."]],
+ x:"Treat persistent hyperglycemia to 140–180 mg/dL with close monitoring (2a); avoid intensive 80–130 targets.",refs:["glu.target","glu.intensive"]},
+{id:"glu-hypo",tier:1,title:"A mimic on the glucometer",topics:["glu"],
+ vig:"EMS brings a 70-year-old on insulin with acute expressive aphasia and right arm weakness.",
+ vit:[["Fingerstick","46 mg/dL"],["BP","158/84"],["LKW","40 min"]],
+ q:"First step?",
+ o:[["Treat the hypoglycemia, then re-examine",""],
+    ["Give IVT immediately if CT is negative","Treat glucose <60 mg/dL first; it can mimic stroke."],
+    ["Correct glucose only after CT and CTA","Correction takes minutes and may resolve the deficit."],
+    ["Treat only if a repeat check is below 40 mg/dL","The treatment threshold is <60 mg/dL."]],
+ x:"Treat hypoglycemia <60 mg/dL (COR 1). If a disabling deficit persists after correction, IVT is recommended (COR 1, C-LD).",refs:["glu.hypo","ivt.glucoseMimic"]},
+{id:"bp-preivt",tier:1,title:"Just above the line",topics:["bp"],
+ vig:"A patient with a disabling left hemiparesis is 2 h from onset; CT is negative. BP is 196/112 on two readings. She is otherwise IVT-eligible.",
+ vit:[["BP","196/112"],["LKW","2 h"],["NIHSS","10"]],
+ q:"Next step?",
+ o:[["Lower BP to <185/110 with IV labetalol or nicardipine, give IVT, then keep it <180/105 for 24 h",""],
+    ["Give IVT now; the elevation is modest","BP must be <185/110 before IVT starts."],
+    ["Lower SBP to <140 before IVT to reduce bleeding","Not recommended, and it delays treatment."],
+    ["Withhold IVT; BP above 185/110 excludes treatment","BP that can be lowered below 185/110 does not exclude IVT."]],
+ x:"Lower BP to <185/110 before IVT (COR 1, B-NR) and maintain <180/105 for at least 24 h after (COR 1, B-R).",refs:["bp.preIvt","bp.postIvt"]},
+{id:"bp-ivt140",tier:1,title:"After thrombolysis",topics:["bp"],
+ vig:"Three hours after alteplase for a moderate left MCA stroke, BP is 166/94. A resident proposes a nicardipine infusion to SBP <140 to reduce hemorrhage risk.",
+ vit:[["BP","166/94"],["NIHSS","8 → 5"],["Post-IVT","3 h"]],
+ q:"Your response?",
+ o:[["Keep BP <180/105; an SBP <140 target is not recommended",""],
+    ["Agree: target SBP <140 for 24 h","Intensive lowering after IVT is Class 3: No Benefit."],
+    ["Target SBP 100–120 to minimize symptomatic ICH","This risks hypoperfusion and has no supporting evidence."],
+    ["Stop BP monitoring once below 180/105","Table 7 requires checks every 15 min for 2 h, every 30 min for 6 h, then hourly to 24 h."]],
+ x:"Maintain <180/105 for at least 24 h after IVT; intensive SBP <140 (vs <180) does not improve function.",refs:["bp.ivt140","bp.postIvt","agent.monitor"]},
+{id:"bp-evt140",tier:1,title:"Complete reperfusion",topics:["bp"],
+ vig:"After thrombectomy for a left M1 occlusion with mTICI 3 reperfusion, SBP is 158. The post-procedure order set reads 'SBP <140 × 72 h.' There is no other indication to lower BP.",
+ vit:[["Reperfusion","mTICI 3"],["SBP","158"],["NIHSS","16 → 6"]],
+ q:"What do you do with that order?",
+ o:[["Change it: keep ≤180/105 for 24 h; an SBP <140 target is harmful here",""],
+    ["Keep it; full reperfusion makes tight control safe","SBP <140 for 72 h after successful anterior EVT is Class 3: Harm (LOE A)."],
+    ["Tighten it to SBP <120 for 24 h","More intensive still; same harm signal."],
+    ["Discontinue BP monitoring since the vessel is open","≤180/105 during and for 24 h after EVT is reasonable."]],
+ x:"After successful anterior circulation EVT (mTICI 2b–3), intensive SBP <140 for 72 h is harmful; ≤180/105 for 24 h is reasonable (2a).",refs:["bp.evt140","bp.periEvt"]},
+{id:"bp-noreperf",tier:1,title:"Permissive hypertension",topics:["bp"],
+ vig:"A 69-year-old presents 30 h after onset of left leg weakness. He receives no IVT or EVT. He has no chest pain, heart failure, aortic dissection or other indication to lower BP.",
+ vit:[["BP","194/102"],["LKW","30 h"],["NIHSS","4"]],
+ q:"What is the BP plan?",
+ o:[["Do not start antihypertensives yet",""],
+    ["Start oral amlodipine to bring BP under 140/90 today","Starting treatment below 220/120 in the first 48–72 h does not prevent death or dependency (3: No Benefit, LOE A)."],
+    ["IV labetalol to <185/110 in case he becomes an IVT candidate","He is not a reperfusion candidate."],
+    ["Lower by 50% over the first hour","Rapid large reductions risk hypoperfusion."]],
+ x:"Without IVT/EVT or a comorbid indication, treating BP <220/120 in the first 48–72 h does not help; at ≥220/120 the benefit is uncertain (2b).",refs:["bp.noReperf","bp.over220","bp.comorbid"]},
+{id:"evtp-basilar",tier:1,title:"Fourteen hours, basilar",topics:["evtp"],
+ vig:"A 58-year-old is found with quadriparesis, dysarthria and ophthalmoplegia. CTA shows a basilar artery occlusion.",
+ vit:[["LKW","14 h"],["NIHSS","22"],["Prestroke mRS","0"],["PC-ASPECTS","8"]],
+ q:"Is EVT indicated?",
+ o:[["Yes, EVT is recommended",""],
+    ["No; posterior circulation EVT is not supported beyond 6 h","Basilar EVT is Class 1 within 24 h of onset."],
+    ["No; basilar thrombectomy is still investigational","Several RCTs showed benefit; the recommendation is Class 1, LOE A."],
+    ["Only if NIHSS is below 10","NIHSS ≥10 is the inclusion criterion."]],
+ x:"Basilar occlusion with mRS 0–1, NIHSS ≥10 and PC-ASPECTS ≥6: EVT within 24 h is Class 1 (LOE A).",refs:["evtp.basilar","evtp.mild"]},
+{id:"evta-core",tier:1,title:"ASPECTS 4 at five hours",topics:["evta"],
+ vig:"A 72-year-old woman has a left ICA-terminus occlusion with global aphasia and right hemiplegia.",
+ vit:[["LKW","5 h"],["NIHSS","20"],["Prestroke mRS","0"],["ASPECTS","4"]],
+ q:"EVT?",
+ o:[["Recommended (Class 1)",""],
+    ["Not indicated because ASPECTS is below 6","Within 6 h, ASPECTS 3–10 is Class 1."],
+    ["Only if CT perfusion core is under 70 mL","Perfusion core is not required within 6 h for ICA/M1 with ASPECTS 3–10."],
+    ["Not indicated; a large core means comfort care only","Large-core trials showed EVT benefit; discuss expectations with the family."]],
+ x:"0–6 h, ICA/M1, NIHSS ≥6, mRS 0–1, ASPECTS 3–10: Class 1, LOE A. The guideline advises discussing the smaller absolute benefit of large-core EVT with patients and families.",refs:["evta.early","evta.core02"]},
+{id:"mevo-distal",tier:1,title:"A distal branch",topics:["mevo"],
+ vig:"A 74-year-old woman has right arm weakness and dysarthria. She received tenecteplase at 1.5 h. CTA shows an occluded left M3 branch.",
+ vit:[["LKW","3 h"],["NIHSS","6"],["ASPECTS","9"]],
+ q:"Should she have EVT?",
+ o:[["No; EVT for distal MCA occlusions is not recommended",""],
+    ["Yes; any occlusion visible on CTA within 6 h qualifies","ESCAPE-MeVO and DISTAL showed no benefit (3: No Benefit, LOE A)."],
+    ["Yes, because NIHSS is at least 6","NIHSS ≥6 criteria apply to ICA/M1 and dominant proximal M2."],
+    ["Yes, if she hasn't improved 30 minutes after tenecteplase","Distal occlusions are not EVT targets."]],
+ x:"EVT is Class 3: No Benefit for nondominant or codominant M2, distal MCA, ACA and PCA occlusions.",refs:["mevo.distal","mevo.m2"]},
+{id:"sys-msu",tier:1,title:"The CT on wheels",topics:["sys"],
+ vig:"A city council asks you, as stroke director, what the 2026 guideline says about funding mobile stroke units.",
+ q:"Which statement is accurate?",
+ o:[["Where available, MSUs are recommended over conventional EMS for thrombolytic-eligible patients and must be able to diagnose and give IVT",""],
+    ["MSUs are recommended mainly because trials showed better thrombectomy outcomes","B_PROUD and BEST-MSU showed benefit through faster IVT, not better EVT outcomes."],
+    ["MSUs are optional because evidence is only observational","Class 1, LOE A from randomized trials."],
+    ["MSUs should transport without treating so the CSC can decide","The point of an MSU is treatment on scene."]],
+ x:"MSUs: Class 1, LOE A for thrombolytic-eligible patients; must be equipped to diagnose and give IVT. For EVT candidates, triage with prenotification is 2a.",refs:["sys.msu","sys.msuEquip","sys.msuEvt"]},
+{id:"sys-field",tier:1,title:"Field orders",topics:["sys"],
+ vig:"Paramedics on scene with a 75-year-old with acute left hemiparesis call medical control for orders.",
+ vit:[["BP","214/116"],["Glucose","138 mg/dL"],["LKW","35 min"]],
+ q:"Best order?",
+ o:[["Validated stroke screen, prenotify the stroke center, transport; no field BP lowering",""],
+    ["Apply transdermal nitroglycerin for the BP","Class 3: Harm (LOE A), especially in ICH."],
+    ["IV antihypertensive en route to SBP 130–140","Class 3: No Benefit."],
+    ["Remote ischemic conditioning with the BP cuff during transport","Class 3: No Benefit."]],
+ x:"In the field: a brief stroke assessment tool (COR 1, A) and prenotification (COR 1). Prehospital GTN is harmful; field BP targets and RIC show no benefit.",refs:["sys.ems","sys.prenotify","sys.gtn","sys.fieldBp","sys.ric"]},
+{id:"apt-after-ivt",tier:1,title:"Aspirin after alteplase",topics:["apt"],
+ vig:"An 80-year-old received alteplase 4 hours ago for a disabling stroke; no EVT was done. He has no coronary stent or other strong antiplatelet indication. The team asks when to start aspirin.",
+ vit:[["Post-IVT","4 h"],["NIHSS","9 → 6"]],
+ q:"When should aspirin start?",
+ o:[["After the 24-h follow-up CT or MRI, within 48 h of onset",""],
+    ["Now, to prevent reocclusion","Antiplatelets in the first 24 h after IVT have uncertain risk (2b); reserved for strong concomitant indications."],
+    ["IV aspirin now","IV aspirin during or within 90 min of starting IVT is Class 3: Harm."],
+    ["After 7 days","Aspirin is recommended within 48 h of onset (COR 1, LOE A)."]],
+ x:"Table 7: obtain follow-up imaging at 24 h before antiplatelets. Aspirin within 48 h of onset is Class 1.",refs:["apt.aspirin","apt.postIvt","agent.monitor","apt.ivAspirin"]},
+{id:"ac-af",tier:1,title:"When to start the DOAC",topics:["ac"],
+ vig:"A 73-year-old with newly found atrial fibrillation has a small right frontal infarct. MRI shows no hemorrhagic transformation. Swallow screen passed.",
+ vit:[["NIHSS","3"],["Infarct","small"],["Day","2"]],
+ q:"Timing of oral anticoagulation?",
+ o:[["An early DOAC start is reasonable",""],
+    ["Wait at least 14 days","For milder strokes, early anticoagulation is low risk and reasonable vs delayed (2a, LOE A)."],
+    ["Start IV heparin now to prevent early recurrence","Early anticoagulation within 48 h to prevent worsening is 3: No Benefit."],
+    ["Aspirin plus the DOAC together","Routinely adding antiplatelet to OAC in AF without CAD/stent is 3: Harm."]],
+ x:"Early oral anticoagulation is reasonable in carefully selected, milder AF-related strokes, though its efficacy against early recurrence is not established.",refs:["ac.early","ac.urgent","apt.afAdd"]},
+{id:"unit-dysphagia",tier:1,title:"A pill before the swallow screen",topics:["unit"],
+ vig:"Day 1, NIHSS 9 with dysarthria. Pharmacy has verified oral aspirin, to be taken with water, but the nurse has not done the swallow screen yet.",
+ vit:[["NIHSS","9"],["Dysarthria","moderate"]],
+ q:"What should happen?",
+ o:[["Bedside swallow screen before the pill and water",""],
+    ["Give the aspirin with a sip of water; screening is for meals","A bedside screen comes before any liquid or food intake."],
+    ["Crush it into applesauce without screening","Still oral intake before screening."],
+    ["Skip aspirin until a videofluoroscopic study is done","Screen first; instrumental testing is for failed or impossible screens (2a)."]],
+ x:"Bedside swallow screening before liquid or food intake is Class 1 (C-EO). If failed, an instrumental assessment is reasonable.",refs:["unit.dysScreen","unit.instrumental"]},
+{id:"unit-dvt",tier:1,title:"Immobile on day 2",topics:["unit"],
+ vig:"A 68-year-old with dense left hemiplegia cannot get out of bed on day 2. No contraindication to mechanical prophylaxis.",
+ vit:[["Mobility","bedbound"],["Day","2"]],
+ q:"Best DVT prophylaxis to start now?",
+ o:[["Intermittent pneumatic compression",""],
+    ["Elastic compression stockings","Class 3: Harm (skin breakdown, ulceration, necrosis)."],
+    ["Therapeutic-dose heparin infusion","Full anticoagulation is not prophylaxis."],
+    ["None until he can mobilize","Immobile patients need prophylaxis now."]],
+ x:"IPC is Class 1 (B-R); prophylactic-dose SC heparin is also reasonable (2a). Elastic stockings cause harm.",refs:["unit.ipc","unit.sqHeparin","unit.stockings"]},
+{id:"unit-foley",tier:1,title:"Admission order set",topics:["unit"],
+ vig:"The stroke admission order set includes an indwelling urinary catheter for every patient 'for accurate I/O', plus mobilization out of bed within 12 hours for all.",
+ q:"Which change does the guideline support?",
+ o:[["Remove both: routine Foley placement and very early high-dose mobilization are harmful",""],
+    ["Keep both; they reduce complications","Routine catheters raise UTI risk (3: Harm), and very early high-dose mobilization within 24 h may harm (3: Harm)."],
+    ["Keep the Foley, drop the mobilization","Routine indwelling catheters are Class 3: Harm."],
+    ["Keep the mobilization, drop the Foley","Very early high-dose mobilization within 24 h is Class 3: Harm."]],
+ x:"Avoid routine indwelling bladder catheters (3: Harm, C-LD) and high-dose very early mobilization within 24 h (3: Harm, B-R).",refs:["unit.foley","unit.earlyMob"]},
+{id:"cx-glib",tier:1,title:"Swelling ahead",topics:["cx"],
+ vig:"A 55-year-old has a complete left MCA territory infarct at 10 h and is still awake. The team expects malignant edema. A colleague suggests IV glibenclamide.",
+ vit:[["Age","55"],["NIHSS","21"],["Hours","10"]],
+ q:"Best plan?",
+ o:[["No glibenclamide; monitor closely, discuss goals with family and involve neurosurgery early",""],
+    ["Start IV glibenclamide to prevent edema","Class 3: No Benefit in large hemispheric infarction (age 18–70)."],
+    ["High-dose dexamethasone","Corticosteroids for ischemic swelling are Class 3: Harm."],
+    ["Induce hypothermia to 33 °C","Hypothermia for brain swelling is Class 3: Harm."]],
+ x:"Early goals-of-care discussion and close monitoring are Class 1; if he deteriorates within 48 h despite medical therapy, craniectomy is Class 1 at age ≤60.",refs:["cx.glib","cx.steroids","cx.discuss","cx.dc60"]},
+{id:"cx-seizure",tier:1,title:"Cortical infarct, no seizures",topics:["cx"],
+ vig:"A 64-year-old has a large right frontoparietal cortical infarct. She has had no seizures. The admitting resident asks about levetiracetam.",
+ q:"Should she get antiseizure medication?",
+ o:[["No prophylactic antiseizure medication",""],
+    ["Levetiracetam for 7 days given cortical involvement","Prophylaxis is Class 3: No Benefit."],
+    ["Phenytoin load, then 30 days","Prophylaxis is Class 3: No Benefit."]],
+ x:"Prophylactic antiseizure medication is not recommended; after an unprovoked seizure, antiseizure medication is recommended.",refs:["cx.szProph","cx.szTreat"]},
+{id:"peds-imaging",tier:1,title:"A child with a sudden deficit",topics:["peds"],
+ vig:"A 10-year-old girl has sudden left arm and face weakness that started 70 minutes ago and persists. Your MRI can scan her in 15 minutes.",
+ vit:[["Age","10 y"],["Onset","70 min"],["MRI","available in 15 min"]],
+ q:"Imaging?",
+ o:[["Emergent MRI with MRA of the head and neck",""],
+    ["CT/CTA, as in the adult pathway","CT/CTA is the fallback when MRI isn't available within 25 minutes."],
+    ["Observe; this is likely a mimic","Suspect stroke in children with sudden, ongoing focal deficits (COR 1)."],
+    ["Non-contrast CT only","Vascular imaging is needed to find an LVO."]],
+ x:"Emergent MRI/MRA is reasonable (2a); use CT/CTA if MRI isn't available within 25 minutes.",refs:["peds.mri","peds.ct","peds.suspect"]},
+{id:"supp-fever",tier:1,title:"38.6 °C on day 1",topics:["supp"],
+ vig:"Day 1 after a left MCA stroke, the patient's temperature is 38.6 °C.",
+ vit:[["Temp","38.6 °C"],["Day","1"]],
+ q:"Best approach?",
+ o:[["Find the source (for example aspiration or UTI) and treat toward normothermia",""],
+    ["Induce hypothermia to 33 °C for neuroprotection","Class 3: No Benefit."],
+    ["No action; fever is expected after stroke","Targeting normothermia is Class 1 (B-R)."]],
+ x:"Target normothermia (COR 1, B-R) and identify and treat the source (COR 1, C-EO).",refs:["supp.fever","supp.feverSource","supp.hypothermia"]},
+{id:"supp-oxygen",tier:1,title:"Routine oxygen?",topics:["supp"],
+ vig:"A 71-year-old with a lacunar stroke, not an EVT candidate, has SpO₂ 97% on room air. The nurse places 2 L nasal cannula per an old protocol.",
+ vit:[["SpO₂","97% RA"],["NIHSS","4"],["EVT","not a candidate"]],
+ q:"What does the guideline say?",
+ o:[["Supplemental oxygen is not recommended without hypoxia; give it only to keep SpO₂ >94%",""],
+    ["Oxygen for all stroke patients for the first 24 h","Without hypoxia and EVT eligibility, oxygen is 3: No Benefit."],
+    ["Target SpO₂ 100% to protect the penumbra","No evidence supports this."],
+    ["Hyperbaric oxygen improves recovery","HBO is 3: No Benefit except for arterial air embolism."]],
+ x:"Give oxygen for hypoxia to keep SpO₂ >94% (COR 1). Routine oxygen without hypoxia in EVT-ineligible patients is Class 3: No Benefit.",refs:["supp.spo2","supp.noO2"]},
+{id:"ext-wakeup",tier:1,title:"Woke up aphasic",topics:["ext"],
+ vig:"A 63-year-old went to bed at 23:00 and woke at 07:00 with aphasia and right hemiparesis. It is now 08:30. CT is negative and CTA shows no LVO. Automated CT perfusion shows a small core and a larger penumbra.",
+ vit:[["Bedtime","23:00"],["Woke","07:00"],["Now","08:30"],["NIHSS","11"],["CTP","core 8 mL, penumbra 42 mL"]],
+ q:"Is IVT an option?",
+ o:[["Yes, IVT can be beneficial: within 9 h of the sleep midpoint with salvageable penumbra and no EVT target",""],
+    ["No, last known well was more than 4.5 h ago","Imaging-selected extended-window IVT is 2a."],
+    ["Only with MRI DWI–FLAIR mismatch; perfusion can't select","Both pathways appear in the guideline."],
+    ["Only if EVT is also planned","The perfusion recommendation applies to patients not eligible for EVT."]],
+ x:"Sleep midpoint 03:00, so 08:30 is 5.5 h from it. Not EVT-eligible, salvageable penumbra on automated perfusion, within 9 h of the sleep midpoint: IVT can be beneficial (2a, B-R).",refs:["ext.perfusion","img.ctp45","ext.table3"]},
+{id:"ivt-sickle",tier:1,title:"Sickle cell disease",topics:["ivt"],
+ vig:"A 34-year-old woman with sickle cell disease has a disabling right hemiparesis at 2 h. CT is negative. No other contraindications.",
+ vit:[["Age","34"],["LKW","2 h"],["NIHSS","9"]],
+ q:"IVT?",
+ o:[["IVT can be beneficial and should be given",""],
+    ["Sickle cell disease is a contraindication","Observational data show no excess sICH or systemic hemorrhage (2a)."],
+    ["Exchange transfusion first, then IVT only if no improvement","Do not delay IVT; manage sickle cell needs in parallel."]],
+ x:"In eligible adults with known sickle cell disease, IVT can be beneficial (2a, B-NR).",refs:["ivt.sickle"]},
+
+/* ---------- TIER 2 ---------- */
+{id:"evta-mrs2",tier:2,title:"Walks with a cane",topics:["evta"],
+ vig:"An 81-year-old has a right M1 occlusion. Before the stroke she lived alone and managed her own care but used a cane and relied on her daughter for shopping and finances.",
+ vit:[["LKW","4 h"],["NIHSS","15"],["ASPECTS","8"],["Prestroke mRS","2"]],
+ q:"EVT?",
+ o:[["EVT is reasonable",""],
+    ["Not eligible: prestroke mRS must be 0–1","mRS 2 within 6 h with ASPECTS ≥6 is 2a."],
+    ["Not eligible: age over 80","The age <80 criterion belongs to the large-core recommendations."],
+    ["Eligible only if NIHSS is 20 or more","NIHSS ≥6 is the threshold."]],
+ x:"0–6 h, NIHSS ≥6, ASPECTS ≥6, prestroke mRS 2: EVT is reasonable (2a, B-NR). mRS 3–4: EVT might be reasonable (2b).",refs:["evta.mrs2","evta.mrs34"]},
+{id:"evta-mrs34",tier:2,title:"Moderate prestroke disability",topics:["evta"],
+ vig:"A 79-year-old who needed help walking and with bathing before this stroke has a left M1 occlusion.",
+ vit:[["LKW","3 h"],["NIHSS","14"],["ASPECTS","9"],["Prestroke mRS","3"]],
+ q:"What strength of recommendation applies to EVT?",
+ o:[["EVT might be reasonable (2b)",""],
+    ["EVT is recommended (Class 1)","Class 1 requires prestroke mRS 0–1."],
+    ["EVT is reasonable (2a)","2a covers prestroke mRS 2."],
+    ["EVT is not recommended","No RCTs exist, but cohort data show 20–30% return to baseline; the guideline gives 2b."]],
+ x:"0–6 h, NIHSS ≥6, ASPECTS ≥6, prestroke mRS 3–4: EVT might be reasonable (2b, B-NR).",refs:["evta.mrs34","evta.mrs2"]},
+{id:"evta-core02",tier:2,title:"ASPECTS 2",topics:["evta"],
+ vig:"A 64-year-old man has a left ICA-terminus occlusion. There is no midline shift or significant mass effect.",
+ vit:[["LKW","3.5 h"],["NIHSS","23"],["Prestroke mRS","0"],["ASPECTS","2"]],
+ q:"What is the guideline strength for EVT here?",
+ o:[["EVT is reasonable (Class 2a)",""],
+    ["EVT is recommended (Class 1)","Class 1 covers ASPECTS 3–10."],
+    ["EVT is not recommended below ASPECTS 3","ASPECTS 0–2 within 6 h is 2a."],
+    ["EVT only after CT perfusion shows a core under 50 mL","Not part of this recommendation."]],
+ x:"Within 6 h, selected patients, age <80, NIHSS ≥6, mRS 0–1, ASPECTS 0–2, no significant mass effect: EVT is reasonable (2a, B-R).",refs:["evta.core02","evta.early"]},
+{id:"evta-late",tier:2,title:"Large core at 15 hours",topics:["evta"],
+ vig:"A 74-year-old man has a right M1 occlusion. There is no significant mass effect. Perfusion imaging is unavailable tonight.",
+ vit:[["LKW","15 h"],["Age","74"],["NIHSS","18"],["Prestroke mRS","0"],["ASPECTS","4"]],
+ q:"EVT?",
+ o:[["EVT is recommended",""],
+    ["Only if perfusion shows clinical–core mismatch","The 6–24 h large-core recommendation uses ASPECTS, not perfusion."],
+    ["No; beyond 6 h requires ASPECTS ≥6","6–24 h with ASPECTS 3–5 is Class 1 in selected patients."],
+    ["No; extended-window IVT is preferred","He is an EVT candidate."]],
+ x:"6–24 h, age <80, NIHSS ≥6, mRS 0–1, ASPECTS 3–5, no significant mass effect: Class 1, LOE A.",refs:["evta.lateCore","evta.late6"]},
+{id:"evta-late-old",tier:2,title:"Same scan, older patient",topics:["evta"],
+ vig:"Same presentation as a 74-year-old with right M1 occlusion at 15 h, NIHSS 18, mRS 0, ASPECTS 4, no significant mass effect, except the patient is 84.",
+ vit:[["LKW","15 h"],["Age","84"],["ASPECTS","4"]],
+ q:"How does age change the guideline answer?",
+ o:[["The 6–24 h large-core recommendation doesn't apply; it requires age <80",""],
+    ["No change; age doesn't enter EVT criteria","Age <80 is explicit in both large-core recommendations."],
+    ["EVT is recommended regardless of age with ASPECTS 3–5","The trials underrepresented people over 80."],
+    ["Prestroke mRS 0 overrides the age criterion","Both criteria apply."]],
+ x:"Both large-core recommendations specify age <80. The 6–24 h recommendation for ASPECTS ≥6 has no age limit, but ASPECTS 4 falls outside it.",refs:["evta.lateCore","evta.late6"]},
+{id:"mevo-m2",tier:2,title:"Proximal M2",topics:["mevo"],
+ vig:"A 67-year-old woman has an occlusion of the dominant proximal M2 division (supplying more than half of the MCA territory). She received tenecteplase 30 minutes ago.",
+ vit:[["LKW","3 h"],["NIHSS","9 (aphasia)"],["ASPECTS","8"],["Prestroke mRS","0"]],
+ q:"EVT?",
+ o:[["EVT is reasonable, though benefits are uncertain",""],
+    ["EVT is recommended with the same strength as M1","Dominant proximal M2 is 2a."],
+    ["EVT is not recommended for any M2 occlusion","Dominant proximal M2 differs from nondominant or codominant M2."],
+    ["Wait an hour to see whether tenecteplase works","Don't observe for IVT response before EVT."]],
+ x:"Dominance means the M2 division supplying ≥50% of the MCA territory, not hemispheric side. Dominant proximal M2 within 6 h: EVT reasonable (2a, B-NR).",refs:["mevo.m2","mevo.distal","bridge.ivtFirst"]},
+{id:"evtp-mild",tier:2,title:"Basilar, mild deficits",topics:["evtp"],
+ vig:"A 62-year-old has diplopia, dysarthria and mild left ataxia. CTA shows a basilar artery occlusion.",
+ vit:[["LKW","8 h"],["NIHSS","7"],["Prestroke mRS","0"],["PC-ASPECTS","9"]],
+ q:"Best statement?",
+ o:[["The effectiveness of EVT at NIHSS 6–9 is not well established (2b)",""],
+    ["EVT is recommended (Class 1)","Class 1 requires NIHSS ≥10."],
+    ["EVT is contraindicated below NIHSS 10","Not contraindicated; evidence is uncertain."],
+    ["EVT is reasonable (2a)","The guideline gives 2b."]],
+ x:"Basilar occlusion with NIHSS 6–9: EVT effectiveness within 24 h is not well established (2b, B-R). Watch for fluctuation; basilar deficits can worsen quickly.",refs:["evtp.mild","evtp.basilar"]},
+{id:"ext-lvo-noevt",tier:2,title:"No way to the angio suite",topics:["ext"],
+ vig:"An ice storm has grounded air and ground transfer. A 70-year-old man has a right M1 occlusion. Your hospital cannot perform EVT.",
+ vit:[["LKW","7 h"],["NIHSS","14"],["CTP","core 15 mL, penumbra 90 mL"]],
+ q:"Thrombolysis?",
+ o:[["IVT directed by thrombolysis experts may be beneficial",""],
+    ["IVT is contraindicated after 4.5 h in every LVO patient","LVO with penumbra at 4.5–24 h when EVT isn't possible is 2b."],
+    ["IVT is recommended (Class 1)","This is a 2b recommendation."],
+    ["Give IVT only if EVT can follow within 24 h","The recommendation applies when EVT is not possible."]],
+ x:"LVO, salvageable penumbra, 4.5–24 h, cannot receive EVT: IVT directed by experts may be beneficial (2b, B-R).",refs:["ext.lvoNoEvt","ext.table3"]},
+{id:"ext-dwiflair",tier:2,title:"Unknown onset, MRI",topics:["ext","img"],
+ vig:"A 66-year-old is found at 10:00 with right hemiparesis; he was last seen normal at 21:00 the previous evening. It is now 11:10. MRI shows a small acute left corona radiata DWI lesion (well under one-third of the MCA territory) with no marked FLAIR change. No LVO.",
+ vit:[["LKW","21:00"],["Recognized","10:00"],["Now","11:10"],["NIHSS","8"]],
+ q:"Thrombolysis?",
+ o:[["IVT can be beneficial if given within 4.5 h of symptom recognition",""],
+    ["Not eligible; last known well was 14 h ago","Imaging selection replaces clock time for unknown onset."],
+    ["CT perfusion is required; MRI cannot select patients","DWI–FLAIR selection is a separate 2a pathway."],
+    ["Proceed to EVT","There is no LVO."]],
+ x:"Unknown onset, within 4.5 h of recognition, DWI lesion <⅓ MCA territory and no marked FLAIR change: IVT can be beneficial (2a, B-R), as in WAKE-UP.",refs:["ext.unknown45","img.dwiflair","ext.table3"]},
+{id:"apt-inspires",tier:2,title:"Day 2, intracranial stenosis",topics:["apt"],
+ vig:"A 59-year-old presents 40 h after onset of right hand weakness and mild dysarthria. No IVT. MRA shows a 75% left M1 stenosis with an acute infarct downstream. No atrial fibrillation.",
+ vit:[["Onset","40 h"],["NIHSS","4"],["Stenosis","75% L M1"]],
+ q:"Antithrombotic plan?",
+ o:[["Aspirin + clopidogrel for 21 days, then a single antiplatelet",""],
+    ["Aspirin alone; DAPT only applies within 24 h and NIHSS ≤3","24–72 h and NIHSS ≤5 with presumed atherosclerosis is now 2a."],
+    ["DAPT for 90 days","21 days, then SAPT."],
+    ["Warfarin for intracranial stenosis","Antiplatelets are preferred for noncardioembolic stroke (COR 1, A)."]],
+ x:"NIHSS ≤5 at 24–72 h, no IVT, presumed atherosclerosis with ≥50% stenosis: DAPT for 21 days then SAPT (2a, B-R; INSPIRES).",refs:["apt.inspires","apt.minor"]},
+{id:"apt-cyp",tier:2,title:"A loss-of-function carrier",topics:["apt"],
+ vig:"A 52-year-old has a minor noncardioembolic stroke (NIHSS 2) and arrives 8 h after onset. No IVT. He had genotyping for a cardiac stent last year: CYP2C19 loss-of-function carrier.",
+ vit:[["Onset","8 h"],["NIHSS","2"],["CYP2C19","LOF carrier"]],
+ q:"Which DAPT regimen?",
+ o:[["Ticagrelor + aspirin for 21 days, then ticagrelor alone",""],
+    ["Clopidogrel + aspirin, as for everyone","For LOF carriers, ticagrelor-based DAPT may be reasonable in preference (2b)."],
+    ["Ticagrelor monotherapy instead of aspirin","Ticagrelor over aspirin alone is 3: No Benefit."],
+    ["Aspirin, clopidogrel and dipyridamole","Triple antiplatelet therapy is 3: Harm."]],
+ x:"CYP2C19 LOF carriers with NIHSS ≤3 or ABCD2 ≥4 within 24 h, no IVT: ticagrelor + aspirin for 21 days may be reasonable over clopidogrel + aspirin (2b, B-R; CHANCE-2).",refs:["apt.cyp","apt.minor","apt.triple"]},
+{id:"sys-destination",tier:2,title:"Bypass or not",topics:["sys"],
+ vig:"A rural county with a well-organized regional system. The local primary stroke center has a median door-to-needle time of 30 min and door-in–door-out of about 75 min. The nearest TSC is 55 min farther. EMS finds a patient 50 min from onset with a positive LVO screen.",
+ vit:[["Onset","50 min"],["LVO screen","positive"],["Extra drive to TSC","55 min"]],
+ q:"Destination?",
+ o:[["The local stroke center",""],
+    ["Bypass to the TSC; suspected LVO always goes direct","In well-coordinated systems, bypass to a distant TSC is 3: No Benefit (RACECAT)."],
+    ["The closest non-stroke ED for stabilization","Transport to the closest appropriate stroke facility (COR 1)."],
+    ["Wait on scene for a helicopter","Delay costs treatment time."]],
+ x:"Direct-to-TSC is 2a where a TSC is locally accessible and 2b in poorly coordinated systems, but 3: No Benefit when bypassing proficient local centers for a distant TSC.",refs:["sys.bypass","sys.directTsc","sys.poorSys","sys.closest"]},
+{id:"sys-dido",tier:2,title:"Drip and ship",topics:["sys","bridge"],
+ vig:"At a primary stroke center, a patient received tenecteplase 35 minutes after arrival. CTA shows a right M1 occlusion. The transfer coordinator asks what to prioritize.",
+ vit:[["Door-to-needle","35 min"],["CTA","R M1"],["NIHSS","17"]],
+ q:"Best plan?",
+ o:[["Transfer immediately under a pre-arranged protocol, targeting door-in–door-out ≤120 min",""],
+    ["Observe for an hour after tenecteplase to see whether transfer is needed","Don't observe for IVT response (COR 1, A)."],
+    ["Repeat the CT after tenecteplase, then transfer","Adds delay; the receiving center may even go direct to angiography (2b)."],
+    ["Admit locally; tenecteplase is enough for M1","EVT is indicated."]],
+ x:"Transfer protocols that reduce DIDO are Class 1; IVT should not delay EVT. Transferred LVO patients may go straight to angiography without repeat imaging unless there's clinical change or delay (2b).",refs:["sys.dido","bridge.ivtFirst","img.dtas"]},
+{id:"bridge-adjunct",tier:2,title:"Extra antithrombotics",topics:["bridge"],
+ vig:"A patient on tenecteplase is heading to the angio suite. Two suggestions come up: an argatroban infusion alongside IVT, and IV tirofiban before groin puncture.",
+ vit:[["IVT","tenecteplase"],["Target","L M1"]],
+ q:"Which should you give?",
+ o:[["Neither",""],
+    ["Argatroban, not tirofiban","Argatroban with IVT is 3: No Benefit (LOE A)."],
+    ["Tirofiban, not argatroban","Preoperative tirofiban is 3: No Benefit."],
+    ["Both, to prevent reocclusion","Neither improves outcome."]],
+ x:"Adjunctive argatroban or eptifibatide with IVT and preoperative tirofiban before EVT are all Class 3: No Benefit.",refs:["bridge.argatroban","bridge.eptifibatide","bridge.tirofiban"]},
+{id:"contra-doac",tier:2,title:"Apixaban this morning",topics:["contra"],
+ vig:"A 72-year-old took apixaban 5 mg 7 hours ago. She has a disabling left MCA syndrome at 1.5 h. CT is negative; CTA shows no LVO. Creatinine is normal. Your lab has no apixaban-calibrated anti-Xa assay.",
+ vit:[["Last DOAC","7 h ago"],["LKW","1.5 h"],["NIHSS","11"],["CrCl","78 mL/min"]],
+ q:"How does the guideline frame IVT here?",
+ o:[["Safety is unknown; IVT may be considered after an individualized benefit–risk discussion, without undue delay",""],
+    ["Absolute contraindication within 48 h of any DOAC","Table 8 lists recent DOAC exposure as a relative contraindication."],
+    ["No issue; DOACs don't affect thrombolysis","Safety within 48 h is unknown and needs a deliberate decision."],
+    ["Give andexanet alfa routinely, then IVT","The guideline lists reversal agent availability as one factor, not a routine step."]],
+ x:"Table 8: with disabling symptoms and DOAC exposure <48 h, IVT may be considered after weighing timing of the last dose, renal function, severity, EVT availability, and access to reversal agents and specific assays. Document the reasoning carefully.",refs:["contra.doac"]},
+{id:"contra-spine",tier:2,title:"Surgery last week",topics:["contra"],
+ vig:"Two patients with disabling strokes at 2 h, both with negative CT. Patient A had a lumbar laminectomy 9 days ago. Patient B had a total knee replacement 9 days ago.",
+ q:"How does Table 8 classify them?",
+ o:[["A: absolute contraindication (spinal surgery <14 days). B: relative (major non-CNS surgery <10 days)",""],
+    ["Both absolute","Major non-CNS surgery within 10 days is relative; consult the surgeons."],
+    ["Both relative","Intracranial or spinal surgery within 14 days is potentially harmful and IVT should not be given."],
+    ["Neither matters after 7 days","Spinal surgery counts until 14 days; non-CNS surgery until 10 days."]],
+ x:"Neurosurgery (intracranial or spinal) within 14 days is an absolute contraindication. Recent major non-CNS surgery within 10 days calls for individual risk–benefit assessment with the surgical team.",refs:["contra.neurosurg","contra.relative"]},
+{id:"contra-coag",tier:2,title:"The INR comes back",topics:["contra"],
+ vig:"A 66-year-old with a disabling stroke and no history of warfarin or heparin use started an alteplase infusion at 50 min, before labs resulted. Twenty minutes into the infusion, the INR returns at 1.9.",
+ vit:[["INR","1.9"],["Platelets","210 000"],["Alteplase","20 min in"]],
+ q:"Next step?",
+ o:[["Stop the alteplase infusion",""],
+    ["Continue; the INR is only mildly elevated","INR >1.7 is an absolute contraindication; stop if it turns out abnormal."],
+    ["Continue, and give vitamin K","Stop the thrombolytic first."],
+    ["Starting before labs was itself an error","Without recent warfarin or heparin, starting before results is acceptable."]],
+ x:"Without recent warfarin or heparin, IVT can start before coagulation results, but should be discontinued if INR >1.7 or PT/PTT is abnormal.",refs:["contra.coag","ivt.noLabs"]},
+{id:"contra-aneurysm",tier:2,title:"An incidental aneurysm",topics:["contra"],
+ vig:"A 59-year-old with a disabling stroke at 2 h has a 5-mm unruptured left MCA bifurcation aneurysm on CTA. No other contraindications.",
+ vit:[["LKW","2 h"],["NIHSS","10"],["Aneurysm","5 mm, unruptured"]],
+ q:"IVT?",
+ o:[["Give IVT; benefit likely outweighs risk",""],
+    ["Absolute contraindication","Table 8 lists unruptured aneurysm as low risk of harm."],
+    ["Coil the aneurysm first","Delays treatment without evidence of benefit."],
+    ["Give half-dose tenecteplase","No such recommendation."]],
+ x:"Table 8: in unruptured intracranial aneurysm the risk of harm is likely low and IVT should be considered.",refs:["contra.favor"]},
+{id:"contra-sich",tier:2,title:"Headache after tenecteplase",topics:["contra"],
+ vig:"Fifty minutes after tenecteplase, a patient develops severe headache and vomiting, and NIHSS rises from 9 to 16. BP 192/108.",
+ vit:[["Post-TNK","50 min"],["NIHSS","9 → 16"],["BP","192/108"]],
+ q:"Immediate management?",
+ o:[["Emergent CT; CBC, PT/INR, aPTT, fibrinogen, type and cross; if ICH, cryoprecipitate 10 U and tranexamic acid 1 g IV",""],
+    ["Fresh frozen plasma and vitamin K","Table 5 uses cryoprecipitate to restore fibrinogen, plus an antifibrinolytic."],
+    ["Platelet transfusion and protamine","Not part of Table 5 management."],
+    ["Recheck in 1 hour; headache is common after IVT","Worsening with headache and vomiting is an emergency."]],
+ x:"Table 5: emergent labs including fibrinogen and type and cross; NCCT; cryoprecipitate 10 U (target fibrinogen ≥150 mg/dL); TXA 1000 mg over 10 min or ε-aminocaproic acid; hematology and neurosurgery; supportive BP, ICP and glucose care.",refs:["contra.sich","bp.comorbid"]},
+{id:"contra-angioedema",tier:2,title:"A swelling tongue",topics:["contra"],
+ vig:"Thirty minutes into an alteplase infusion, a patient taking lisinopril develops swelling of the anterior tongue and lips. He is speaking and protecting his airway.",
+ vit:[["Alteplase","30 min in"],["SpO₂","96%"],["Meds","lisinopril"]],
+ q:"Management?",
+ o:[["Stop alteplase, hold the ACE inhibitor, give methylprednisolone, diphenhydramine and an H2 blocker; watch the airway closely",""],
+    ["Intubate immediately","Intubation may be unnecessary if edema is limited to the anterior tongue and lips."],
+    ["Continue alteplase and give diphenhydramine","Discontinue the infusion."],
+    ["Give fresh frozen plasma first","Table 6 lists airway management and anti-inflammatory therapy first."]],
+ x:"Table 6: maintain airway; stop alteplase and hold ACE inhibitors; methylprednisolone 125 mg, diphenhydramine 50 mg, ranitidine 50 mg or famotidine 20 mg IV; epinephrine if worsening; icatibant or C1 esterase inhibitor may help.",refs:["contra.angioedema"]},
+{id:"ivt-crao",tier:2,title:"Sudden monocular blindness",topics:["ivt"],
+ vig:"A 68-year-old has painless, sudden loss of vision in the right eye 2.5 h ago. Fundoscopy shows a cherry-red spot; ESR and CRP are normal. Vision is count fingers only.",
+ vit:[["Onset","2.5 h"],["Vision","count fingers"],["ESR/CRP","normal"]],
+ q:"What does the guideline say about IVT?",
+ o:[["Its usefulness within 4.5 h is uncertain (2b)",""],
+    ["IVT is recommended (Class 1) as for disabling stroke","The guideline does not give CRAO a Class 1 recommendation."],
+    ["IVT is contraindicated in retinal ischemia","Not contraindicated; usefulness is uncertain."],
+    ["Ocular massage and paracentesis are recommended instead","Not addressed as recommendations."]],
+ x:"Acute nonarteritic CRAO with disabling vision loss, otherwise IVT-eligible: usefulness of IVT within 4.5 h is uncertain (2b, C-LD).",refs:["ivt.crao"]},
+{id:"peds-evt",tier:2,title:"Nine years old, M1",topics:["peds"],
+ vig:"A 9-year-old has had sudden right hemiparesis and aphasia for 4 hours. MRI/MRA shows a left M1 occlusion with a small DWI lesion. Your center has neurointerventionalists experienced with pediatric cases.",
+ vit:[["Age","9 y"],["Onset","4 h"],["PedNIHSS","13"]],
+ q:"EVT?",
+ o:[["EVT can be effective and is reasonable (Class 2a)",""],
+    ["EVT is contraindicated under age 18","The 2026 guideline adds pediatric EVT recommendations."],
+    ["IVT only; pediatric EVT has no recommendation","Age ≥6, LVO, within 6 h is 2a."],
+    ["EVT is recommended (Class 1)","The pediatric recommendations are 2a and 2b."]],
+ x:"Age ≥6 with LVO within 6 h: EVT by experienced neurointerventionalists can be effective (2a, B-NR). Alteplase within 4.5 h for disabling deficits may be considered (2b).",refs:["peds.evt6","peds.ivt"]},
+{id:"peds-young",tier:2,title:"A first seizure in a toddler",topics:["peds"],
+ vig:"A 4-year-old has a first-time focal seizure, then persistent left hemiparesis. MRI/MRA at 10 h shows a right M1 occlusion with a small infarct and a large territory at risk.",
+ vit:[["Age","4 y"],["Onset","10 h"],["MRA","R M1"]],
+ q:"Best statement?",
+ o:[["EVT by a neurointerventionalist with pediatric experience may be reasonable (2b)",""],
+    ["Call it Todd paralysis and observe","Suspect stroke after a first-time seizure with persistent focal deficit (COR 1)."],
+    ["EVT can be effective (2a), as for older children","2a applies to age ≥6."],
+    ["Alteplase is recommended","Pediatric IVT is 2b and only within 4.5 h."]],
+ x:"Age 28 days–6 years, LVO including presentation with first-time seizure, within 24 h with salvageable tissue: EVT may be reasonable (2b, B-NR).",refs:["peds.evtYoung","peds.suspect"]},
+{id:"cx-dc-older",tier:2,title:"Malignant edema at 66",topics:["cx"],
+ vig:"A 66-year-old has a complete right MCA infarct. At 36 h he is drowsier, with a 6 mm midline shift despite hyperosmolar therapy.",
+ vit:[["Age","66"],["Hours","36"],["Shift","6 mm"]],
+ q:"Best statement for the family meeting?",
+ o:[["Craniectomy may be considered to reduce mortality; many survivors remain severely disabled",""],
+    ["Craniectomy is recommended (Class 1), as for younger patients","Class 1 applies to age ≤60."],
+    ["Craniectomy is contraindicated over 60","It may be considered (2b)."],
+    ["Start IV glibenclamide instead","Class 3: No Benefit."]],
+ x:"Age >60: decompressive craniectomy may be considered to reduce mortality (2b, B-R). Decreased consciousness is a reasonable surgical trigger (2a).",refs:["cx.dcOld","cx.dc60","cx.locTrigger","cx.osmotic"]},
+{id:"cx-cerebellar",tier:2,title:"Posterior fossa pressure",topics:["cx"],
+ vig:"Day 2 after a large right cerebellar infarct, a 58-year-old is now drowsy with a new gaze palsy. CT shows fourth ventricle effacement, brainstem compression and early hydrocephalus.",
+ vit:[["Day","2"],["GCS","12"],["CT","4th ventricle effaced"]],
+ q:"Definitive management?",
+ o:[["Suboccipital decompressive craniectomy with dural expansion, with ventriculostomy for the hydrocephalus",""],
+    ["Ventriculostomy alone","With brainstem compression and decline, suboccipital craniectomy should be performed (COR 1)."],
+    ["Mannitol and observation","Osmotic therapy is a bridge to surgery."],
+    ["Corticosteroids","Class 3: Harm for ischemic swelling."]],
+ x:"Cerebellar infarction with deterioration from brainstem compression (or volume ≥35 mL): suboccipital craniectomy (COR 1, B-NR); ventriculostomy for obstructive hydrocephalus (COR 1, C-LD).",refs:["cx.cerebDC","cx.cerebHydro","cx.steroids"]},
+{id:"unit-pes",tier:2,title:"Still can't swallow",topics:["unit"],
+ vig:"Twelve days after a brainstem stroke, a non-tracheostomized patient has persistent moderate dysphagia with penetration on instrumental assessment and is NG-fed.",
+ vit:[["Day","12"],["Feeding","NG tube"],["Trach","no"]],
+ q:"Which statement matches the guideline?",
+ o:[["Pharyngeal electrical stimulation may be reasonable to improve swallowing (2b); plan gastrostomy if inability to swallow will exceed 2–3 weeks",""],
+    ["Prophylactic antibiotics to prevent aspiration pneumonia","Routine prophylactic antibiotics are 3: No Benefit (LOE A)."],
+    ["Stop enteral feeding until swallowing recovers","Enteral diet within 7 days is Class 1."],
+    ["PES is Class 1 for all dysphagic stroke patients","2b for non-tracheostomized; 2a after ventilator weaning in tracheotomized patients."]],
+ x:"PES: 2b in non-tracheostomized patients, 2a after weaning in tracheotomized patients. NG feeding first 7 days, gastrostomy if expected beyond 2–3 weeks (2a).",refs:["unit.pes","unit.ngPeg","unit.abx","unit.enteral"]},
+
+/* ---------- TIER 3 ---------- */
+{id:"t3-ivt-bp",tier:3,title:"Pressure, then needle",topics:["bp","ivt"],
+ vig:"A 71-year-old has disabling right hemiparesis and aphasia. CT shows no hemorrhage. On arrival BP was 208/118; after IV labetalol 10 mg twice it is 182/104.",
+ vit:[["LKW","2 h 10 min"],["NIHSS","13"],["BP now","182/104"]],
+ steps:[
+  {q:"Is IVT appropriate now?",topics:["bp","ivt"],
+   o:[["Yes; BP is now <185/110. Give IVT, then keep BP <180/105",""],
+      ["No; BP above 185/110 on arrival excludes IVT","What matters is BP when IVT starts."],
+      ["Yes, but only after SBP is below 140","Not required and wastes time."],
+      ["No; wait for CTA and perfusion first","Don't delay IVT for multimodal imaging."]],
+   x:"Lower BP to <185/110, then treat as quickly as possible.",refs:["bp.preIvt","ivt.fast"]},
+  {q:"Two hours after tenecteplase, BP is 174/98 and NIHSS 9. What BP plan?",topics:["bp"],
+   o:[["Keep monitoring per protocol and maintain <180/105; no intensification",""],
+      ["Start nicardipine to SBP <140","Class 3: No Benefit."],
+      ["Stop monitoring","Checks continue to 24 h."],
+      ["Give fluids to push SBP above 180 for perfusion","Post-IVT BP must stay <180/105."]],
+   x:"After IVT keep <180/105 for at least 24 h with Table 7 monitoring; no SBP <140 target.",refs:["bp.postIvt","bp.ivt140","agent.monitor"]}]},
+{id:"t3-evt-bp",tier:3,title:"On apixaban",topics:["evta","bp","contra"],
+ vig:"A 68-year-old woman took apixaban 3 hours ago. She has a left M1 occlusion. After individualized review, the team decides against IVT.",
+ vit:[["LKW","2.5 h"],["NIHSS","17"],["ASPECTS","9"],["Prestroke mRS","0"],["BP","200/106"]],
+ steps:[
+  {q:"Which pathway?",topics:["evta","bp","contra"],
+   o:[["Proceed to EVT and lower BP to ≤185/110 before the procedure",""],
+      ["No EVT while she is anticoagulated","Anticoagulation does not exclude thrombectomy."],
+      ["EVT only after reversing apixaban","Reversal is not needed for EVT and delays it."],
+      ["Give half-dose tenecteplase, then EVT","No such recommendation."]],
+   x:"ICA/M1 within 6 h with NIHSS ≥6, mRS 0–1, ASPECTS 3–10 is Class 1 EVT. Without IVT, ≤185/110 before EVT is reasonable (2a).",refs:["evta.early","bp.preEvt","contra.doac"]},
+  {q:"mTICI 2c is achieved. SBP is 162. Post-procedure BP target?",topics:["bp"],
+   o:[["≤180/105 for 24 h, avoiding an SBP <140 target",""],
+      ["SBP <140 for 72 h because reperfusion is nearly complete","Class 3: Harm."],
+      ["SBP <120 for 24 h","More intensive still."],
+      ["No target needed after reperfusion","≤180/105 during and for 24 h after is reasonable."]],
+   x:"After successful reperfusion, keep ≤180/105 and avoid intensive SBP <140.",refs:["bp.periEvt","bp.evt140"]}]},
+{id:"t3-minor-dapt",tier:3,title:"Minor stroke, inside the window",topics:["ivt","apt"],
+ vig:"A 56-year-old has had mild left facial droop and slight dysarthria for 2 hours. He is fully intelligible and says he could work normally. CT is negative. CTA shows no occlusion and no significant stenosis.",
+ vit:[["LKW","2 h"],["NIHSS","2"],["BP","150/86"]],
+ steps:[
+  {q:"Thrombolysis?",topics:["ivt"],
+   o:[["No; the deficit is non-disabling, so start DAPT",""],
+      ["Yes, tenecteplase, since he is within 4.5 h","Class 3: No Benefit for mild non-disabling deficits."],
+      ["Yes, alteplase rather than tenecteplase for mild strokes","Agent choice isn't the issue."],
+      ["CT perfusion first, then decide","Perfusion doesn't change the non-disabling decision."]],
+   x:"Isolated facial droop is listed in Table 4 as possibly non-disabling. IVT is not recommended; DAPT is preferred.",refs:["ivt.nondisabling","ivt.table4"]},
+  {q:"What DAPT regimen?",topics:["apt"],
+   o:[["Aspirin + clopidogrel (with clopidogrel load) now, for 21 days, then a single antiplatelet",""],
+      ["DAPT for 90 days","21 days, then SAPT."],
+      ["Ticagrelor alone","Ticagrelor over aspirin is 3: No Benefit."],
+      ["Start DAPT after 24 h of observation","Start within 24 h of onset."]],
+   x:"Minor noncardioembolic stroke (NIHSS ≤3) without IVT: DAPT within 24 h for 21 days, then SAPT (COR 1, LOE A).",refs:["apt.minor"]}]},
+{id:"t3-glu-cx",tier:3,title:"Big infarct, high sugar",topics:["glu","cx"],
+ vig:"A 52-year-old has a complete left MCA infarct and arrived too late for reperfusion therapy. Glucose readings are persistently high.",
+ vit:[["Age","52"],["NIHSS","22"],["Glucose","248, 262, 255"]],
+ steps:[
+  {q:"Glucose plan?",topics:["glu"],
+   o:[["Insulin to a target of 140–180 mg/dL",""],
+      ["IV insulin to 80–130 mg/dL","Class 3: No Benefit."],
+      ["Treat only above 400 mg/dL","Treat persistent hyperglycemia."],
+      ["No insulin; hyperglycemia supports the penumbra","Associated with worse outcomes."]],
+   x:"Target 140–180 mg/dL; avoid intensive control.",refs:["glu.target","glu.intensive"]},
+  {q:"At 30 h she is more somnolent with a 7 mm shift despite osmotic therapy. Next?",topics:["cx"],
+   o:[["Decompressive hemicraniectomy with dural expansion",""],
+      ["IV glibenclamide","Class 3: No Benefit."],
+      ["Dexamethasone","Class 3: Harm."],
+      ["Continue medical therapy; surgery only after 72 h","The benefit is for deterioration within 48 h."]],
+   x:"Age ≤60, unilateral MCA infarction, deterioration within 48 h despite medical therapy: craniectomy (COR 1, LOE A).",refs:["cx.dc60","cx.locTrigger","cx.glib"]}]},
+{id:"t3-msu",tier:3,title:"Treatment in the driveway",topics:["sys","agent","bridge"],
+ vig:"The mobile stroke unit reaches a 67-year-old 35 minutes after sudden aphasia and right hemiparesis. Onboard CT shows no hemorrhage; onboard CTA shows a left M1 occlusion.",
+ vit:[["Onset","35 min"],["NIHSS","12"],["BP","172/90"],["Glucose","118 mg/dL"]],
+ steps:[
+  {q:"What happens on the MSU?",topics:["agent","bridge"],
+   o:[["Give tenecteplase 0.25 mg/kg now",""],
+      ["Hold IVT; an M1 needs EVT, so go straight to the angio suite","Eligible patients get IVT without delaying EVT (COR 1, A)."],
+      ["Tenecteplase 0.4 mg/kg because of the LVO","Class 3: No Benefit."],
+      ["Wait for in-person neurology at the hospital","MSU care with remote expertise is beneficial (COR 1)."]],
+   x:"IVT in the golden hour is the MSU's purpose; for patients eligible for both, IVT is given without delaying EVT.",refs:["sys.msu","agent.choice","bridge.ivtFirst"]},
+  {q:"Destination?",topics:["sys"],
+   o:[["The thrombectomy-capable center, with prenotification",""],
+      ["The nearest primary stroke center for observation","MSU triage to the EVT center avoids a transfer (2a)."],
+      ["Whichever hospital is closest","An EVT target is already confirmed."],
+      ["A primary stroke center for repeat CT","Adds delay."]],
+   x:"For EVT-eligible patients, MSUs can triage to the appropriate thrombectomy-capable facility with prenotification (2a, B-NR).",refs:["sys.msuEvt","sys.directTsc"]}]},
+{id:"t3-codominant",tier:3,title:"Aphasia and a branch",topics:["ivt","mevo"],
+ vig:"A 62-year-old has marked expressive aphasia that would keep him from working. CT is negative. CTA shows a codominant M2 occlusion.",
+ vit:[["LKW","2 h"],["NIHSS","6"],["ASPECTS","9"]],
+ steps:[
+  {q:"Thrombolysis?",topics:["ivt"],
+   o:[["Yes; the deficit is disabling and he is within 4.5 h",""],
+      ["No; NIHSS 6 is a minor stroke","Disability, not the score, decides."],
+      ["No; occlusions should go to EVT rather than IVT","IVT is indicated regardless of vessel."],
+      ["Only after perfusion imaging","Don't delay IVT."]],
+   x:"Disabling deficit within 4.5 h: treat rapidly without advanced imaging selection.",refs:["ivt.disabling","ivt.fast"]},
+  {q:"After tenecteplase, the interventionalist asks about EVT for the codominant M2.",topics:["mevo"],
+   o:[["EVT is not recommended",""],
+      ["EVT is recommended (Class 1)","Class 1 applies to ICA/M1."],
+      ["EVT is reasonable (2a) for any M2","Only dominant proximal M2 is 2a."],
+      ["EVT only if NIHSS worsens after IVT","Not an indication here."]],
+   x:"Nondominant and codominant M2 occlusions: EVT is 3: No Benefit (LOE A).",refs:["mevo.distal","mevo.m2"]}]},
+{id:"t3-af-unit",tier:3,title:"AF and a weak leg",topics:["unit","ac"],
+ vig:"A 79-year-old woman with atrial fibrillation has a small left frontal infarct with right leg weakness that keeps her in bed. MRI shows no hemorrhage. She passed the swallow screen.",
+ vit:[["NIHSS","4"],["Day","1"],["Mobility","bedbound"]],
+ steps:[
+  {q:"VTE prophylaxis today?",topics:["unit","ac"],
+   o:[["Intermittent pneumatic compression",""],
+      ["Elastic compression stockings","Class 3: Harm."],
+      ["Full-dose heparin infusion","Early anticoagulation within 48 h is 3: No Benefit."],
+      ["None; she will mobilize soon","She is immobile now."]],
+   x:"IPC is Class 1; prophylactic-dose SC heparin is also reasonable (2a).",refs:["unit.ipc","unit.sqHeparin","unit.stockings","ac.urgent"]},
+  {q:"Timing of oral anticoagulation?",topics:["ac"],
+   o:[["An early DOAC start is reasonable for this milder stroke",""],
+      ["Delay 14 days","Early is reasonable in milder strokes (2a, A)."],
+      ["IV heparin bridge now, then warfarin","Not recommended."],
+      ["DOAC plus aspirin","Routinely adding antiplatelet to OAC is 3: Harm."]],
+   x:"Early oral anticoagulation is reasonable in carefully selected, milder AF-related strokes.",refs:["ac.early","apt.afAdd"]}]},
+{id:"t3-peds-img",tier:3,title:"A teenager in the ED",topics:["peds","img"],
+ vig:"A 14-year-old has had sudden aphasia and right hemiparesis for 2 hours. The MRI scanner is occupied and the earliest slot is 45 minutes away.",
+ vit:[["Age","14 y"],["Onset","2 h"],["PedNIHSS","10"]],
+ steps:[
+  {q:"Imaging?",topics:["peds","img"],
+   o:[["CT/CTA now",""],
+      ["Wait for MRI/MRA","When MRI isn't available within 25 min, CT/CTA is reasonable (2a)."],
+      ["Non-contrast CT only","Vascular imaging is needed."],
+      ["EEG first to exclude seizure","Imaging comes first."]],
+   x:"MRI/MRA is preferred in children, but CT/CTA is reasonable if MRI can't happen within 25 minutes.",refs:["peds.ct","peds.mri"]},
+  {q:"CTA shows a left M1 occlusion and no hemorrhage. Treatment?",topics:["peds"],
+   o:[["EVT by experienced neurointerventionalists (2a); alteplase may also be considered (2b)",""],
+      ["Alteplase only; EVT unsupported under 18","Age ≥6 with LVO within 6 h is 2a."],
+      ["Supportive care only","Pediatric reperfusion is now addressed."],
+      ["Tenecteplase 0.4 mg/kg","Not recommended; pediatric IVT data are for alteplase."]],
+   x:"Age ≥6, LVO, within 6 h: EVT can be effective (2a); alteplase within 4.5 h for disabling deficits may be considered (2b).",refs:["peds.evt6","peds.ivt"]}]},
+{id:"t3-basilar-bp",tier:3,title:"Basilar at 18 hours",topics:["evtp","bp"],
+ vig:"A 61-year-old with sudden vertigo progressed to coma. CTA shows a basilar occlusion.",
+ vit:[["LKW","18 h"],["NIHSS","25"],["Prestroke mRS","1"],["PC-ASPECTS","7"]],
+ steps:[
+  {q:"EVT?",topics:["evtp"],
+   o:[["Recommended",""],
+      ["Not recommended beyond 12 h","The window is 24 h."],
+      ["Not recommended with NIHSS above 20","NIHSS ≥10 qualifies; there is no upper limit."],
+      ["Only if PC-ASPECTS is 10","PC-ASPECTS ≥6 qualifies."]],
+   x:"Basilar occlusion, mRS 0–1, NIHSS ≥10, PC-ASPECTS ≥6, within 24 h: Class 1.",refs:["evtp.basilar"]},
+  {q:"Reperfusion achieved. BP drops to 96/58 after sedation. Plan?",topics:["bp"],
+   o:[["Correct hypotension and hypovolemia; then keep BP ≤180/105 for 24 h",""],
+      ["Accept it; low BP protects against hemorrhage","Correct hypotension (COR 1)."],
+      ["Target SBP <120 for 72 h","No support."],
+      ["Induce hypertension above 200 systolic","Correct hypotension instead."]],
+   x:"Correct hypotension and hypovolemia (COR 1); ≤180/105 during and for 24 h after EVT is reasonable (2a).",refs:["bp.hypotension","bp.periEvt"]}]},
+{id:"t3-glucose-mimic",tier:3,title:"Corrected sugar, persistent deficit",topics:["glu","ivt"],
+ vig:"A 66-year-old on insulin has acute right hemiparesis and aphasia. EMS glucose is 42 mg/dL. After IV dextrose, glucose is 118 mg/dL, but 15 minutes later the deficits persist. CT is negative.",
+ vit:[["LKW","1 h 50 min"],["Glucose","42 → 118"],["NIHSS","12"]],
+ steps:[
+  {q:"First step on arrival, before any thrombolysis decision?",topics:["glu","ivt"],
+   o:[["Check glucose and treat the hypoglycemia",""],
+      ["Give IVT immediately","Glucose must be determined and severe hypoglycemia treated first (COR 1)."],
+      ["CTA first","Glucose correction comes first and takes minutes."],
+      ["Wait 2 hours to confirm the deficit isn't from hypoglycemia","The 4.5-h window is running."]],
+   x:"Determine glucose before IVT and treat hypoglycemia <60 mg/dL.",refs:["ivt.glucose","glu.hypo"]},
+  {q:"Deficits remain disabling after normalizing glucose. Now?",topics:["ivt"],
+   o:[["Give IVT",""],
+      ["No IVT; the deficit is probably hypoglycemic","If disabling deficits persist after correction, IVT is recommended (COR 1, C-LD)."],
+      ["Wait 6 hours for possible recovery","The window would close."],
+      ["IVT only with MRI confirmation of infarct","Not required within 4.5 h."]],
+   x:"Persistent disabling deficits despite correction to normoglycemia: IVT is recommended.",refs:["ivt.glucoseMimic","ivt.fast"]}]},
+{id:"t3-stent-ivt",tier:3,title:"A fresh coronary stent",topics:["ivt","apt"],
+ vig:"A 63-year-old had a drug-eluting coronary stent placed 3 weeks ago and takes aspirin and ticagrelor. He has a disabling stroke at 2 h. CT is negative.",
+ vit:[["LKW","2 h"],["NIHSS","11"],["Stent","3 weeks"]],
+ steps:[
+  {q:"Thrombolysis?",topics:["ivt"],
+   o:[["Give IVT despite dual antiplatelet therapy",""],
+      ["Withhold IVT because of DAPT","Prior antiplatelets don't exclude IVT (COR 1, B-NR)."],
+      ["Give platelets, then IVT","Not recommended."],
+      ["EVT only, never IVT","No LVO; IVT is the treatment."]],
+   x:"Patients on single or dual antiplatelet therapy should receive IVT despite higher sICH risk.",refs:["ivt.antiplatelet"]},
+  {q:"Six hours after tenecteplase, cardiology worries about stent thrombosis. Resume antiplatelets now?",topics:["apt"],
+   o:[["Risk is uncertain, but antiplatelets might be considered because withholding them carries substantial risk; decide with cardiology",""],
+      ["Absolutely not within 24 h of IVT","The guideline allows consideration when withholding treatment carries substantial risk (2b)."],
+      ["Yes, IV aspirin now","IV aspirin within 90 min of starting IVT is 3: Harm; here the issue is the 24-h window and route."],
+      ["Stop antiplatelets for 7 days","Unnecessary prolonged stent risk."]],
+   x:"Antiplatelet therapy in the first 24 h after IVT has uncertain risk; it might be considered when withholding it is known to cause substantial risk (2b, B-NR).",refs:["apt.postIvt","apt.ivAspirin"]}]},
+
+/* ---------- TIER 4 ---------- */
+{id:"t4-pathway",tier:4,title:"Breakfast to reperfusion",topics:["sys","ivt","bridge","evta","bp","glu"],
+ vig:"At 07:10 a 64-year-old man collapses at breakfast with left hemiplegia, right gaze deviation and neglect. His wife calls 911 at 07:15.",
+ vit:[["Age","64"],["Prestroke mRS","0"],["Weight","90 kg"]],
+ steps:[
+  {q:"EMS on scene: BP 204/110, glucose 156 mg/dL. Which prehospital action is correct?",topics:["sys"],
+   o:[["Validated stroke/LVO screen, prenotify the receiving center, transport without field BP lowering",""],
+      ["Transdermal nitroglycerin for the BP","Class 3: Harm."],
+      ["IV antihypertensive to SBP 130–140 en route","Class 3: No Benefit."],
+      ["Remote ischemic conditioning during transport","Class 3: No Benefit."]],
+   x:"Prenotification and a validated screen; no field BP lowering, GTN or RIC.",refs:["sys.ems","sys.prenotify","sys.gtn","sys.fieldBp"]},
+  {q:"07:52, ED: CT shows no hemorrhage, ASPECTS 9, NIHSS 18, BP 178/96. CTA is next. Thrombolysis?",topics:["ivt"],
+   o:[["Give tenecteplase 25 mg now; CTA must not delay IVT",""],
+      ["Wait for CTA; if there's an LVO, skip IVT and go straight to EVT","IVT is given to patients eligible for both (COR 1, A)."],
+      ["Wait for CT perfusion to define the core","Don't delay IVT for advanced imaging."],
+      ["Give IVT only if CTA shows no LVO","IVT is indicated regardless of LVO."]],
+   x:"Start IVT as quickly as possible within 4.5 h; 90 kg falls in the ≥90 kg band (25 mg).",refs:["ivt.fast","bridge.ivtFirst","agent.table7"]},
+  {q:"CTA: right M1 occlusion. NIHSS improves to 14 after tenecteplase. Next?",topics:["bridge","evta"],
+   o:[["Proceed directly to EVT without waiting to judge the IVT response",""],
+      ["Hold EVT and observe for further improvement","Don't observe for IVT response."],
+      ["Repeat CT before angiography","Adds delay without a clinical change requiring it."],
+      ["Start argatroban to augment lysis, then reassess","Class 3: No Benefit."]],
+   x:"ICA/M1 within 6 h, NIHSS ≥6, ASPECTS 3–10: EVT Class 1, without waiting on IVT.",refs:["bridge.ivtFirst","evta.early","bridge.argatroban"]},
+  {q:"mTICI 3 at 09:05. On the stroke unit, SBP runs in the 150s and glucose reads 230 and 245. Which orders?",topics:["bp","glu"],
+   o:[["BP ≤180/105 for 24 h (no SBP <140 target); insulin to 140–180 mg/dL",""],
+      ["SBP <140 for 72 h; insulin to 80–130 mg/dL","Both intensive targets are Class 3."],
+      ["SBP <140 for 24 h; no glucose treatment","Intensive SBP is harmful after EVT; treat persistent hyperglycemia."],
+      ["No BP ceiling; insulin to 80–130 mg/dL","Keep ≤180/105; avoid intensive glucose control."]],
+   x:"After successful EVT: ≤180/105 for 24 h and no intensive SBP target; glucose 140–180 mg/dL.",refs:["bp.periEvt","bp.evt140","glu.target","glu.intensive"]}]},
+{id:"t4-large-core",tier:4,title:"Large core, long night",topics:["ext","evta","bp","cx"],
+ vig:"A 57-year-old woman went to bed normal at 22:00 and woke at 06:00 with right hemiplegia and global aphasia. It is now 10:00. CT shows no significant mass effect; CTA shows a left M1 occlusion.",
+ vit:[["LKW","22:00 (12 h)"],["NIHSS","24"],["Prestroke mRS","0"],["ASPECTS","4"],["CTP core","110 mL"]],
+ steps:[
+  {q:"Extended-window IVT?",topics:["ext"],
+   o:[["No; she is EVT-eligible, and a 110 mL core is outside the trial selection criteria",""],
+      ["Yes; she is within 9 h of the sleep midpoint","The perfusion recommendation is for patients not eligible for EVT, with salvageable penumbra."],
+      ["Yes, alteplase rather than tenecteplase","She does not meet extended-window selection."],
+      ["Yes, because the LVO-without-EVT pathway applies","EVT is available here."]],
+   x:"Extended-window IVT applies to patients not eligible for EVT with salvageable penumbra; the perfusion trials required a core <70 mL (Table 3).",refs:["ext.perfusion","ext.table3","ext.lvoNoEvt"]},
+  {q:"EVT?",topics:["evta"],
+   o:[["Recommended: 6–24 h, age <80, NIHSS ≥6, mRS 0–1, ASPECTS 3–5, no significant mass effect",""],
+      ["Not recommended: core over 70 mL","The large-core recommendation uses ASPECTS, not a perfusion cutoff."],
+      ["Reasonable only (2a)","Class 1 here."],
+      ["Not recommended after 6 h with ASPECTS below 6","Large-core EVT at 6–24 h is Class 1."]],
+   x:"Large-core EVT at 6–24 h is Class 1, LOE A in selected patients; discuss the smaller absolute benefit with family.",refs:["evta.lateCore"]},
+  {q:"mTICI 2b. SBP 168. BP order?",topics:["bp"],
+   o:[["≤180/105 for 24 h; do not target SBP <140",""],
+      ["SBP <140 for 72 h","Class 3: Harm."],
+      ["SBP 100–120","Risks hypoperfusion."],
+      ["No limit","An upper limit of 180/105 is reasonable."]],
+   x:"≤180/105 during and for 24 h after EVT; intensive SBP <140 is harmful.",refs:["bp.periEvt","bp.evt140"]},
+  {q:"At hour 30, GCS falls and midline shift reaches 8 mm despite osmotic therapy. She is 57.",topics:["cx"],
+   o:[["Decompressive hemicraniectomy with dural expansion",""],
+      ["IV glibenclamide","Class 3: No Benefit."],
+      ["Corticosteroids","Class 3: Harm."],
+      ["No surgery after a large-core thrombectomy","Age ≤60 with deterioration within 48 h is Class 1."]],
+   x:"Age ≤60, unilateral MCA infarction, deterioration within 48 h despite medical therapy: decompressive craniectomy (COR 1, A).",refs:["cx.dc60","cx.glib","cx.steroids"]}]},
+{id:"t4-minor-week",tier:4,title:"The minor stroke admission",topics:["apt","bp","unit"],
+ vig:"A 62-year-old woman arrives 30 h after onset of mild right hand clumsiness and slurred speech. MRI shows a small left MCA-territory infarct; MRA shows a 70% left M1 stenosis. No atrial fibrillation on telemetry.",
+ vit:[["Onset","30 h"],["NIHSS","4"],["BP","188/98"],["Glucose","132 mg/dL"]],
+ steps:[
+  {q:"Antithrombotic plan?",topics:["apt"],
+   o:[["Aspirin + clopidogrel for 21 days, then a single antiplatelet",""],
+      ["Tenecteplase under the extended window","30 h without imaging selection; not an option."],
+      ["Aspirin alone because she is beyond 24 h","DAPT is reasonable to 72 h with presumed atherosclerosis (2a)."],
+      ["Warfarin for the stenosis","Antiplatelets preferred."]],
+   x:"NIHSS ≤5 at 24–72 h, ≥50% atherosclerotic stenosis, no IVT: 21-day DAPT is reasonable (2a, B-R).",refs:["apt.inspires"]},
+  {q:"BP 188/98 with no other indication. Plan?",topics:["bp"],
+   o:[["No acute lowering in the first 48–72 h",""],
+      ["Lower to <140/90 now","3: No Benefit below 220/120."],
+      ["Lower to <185/110 for IVT eligibility","Not a reperfusion candidate."],
+      ["Nicardipine to SBP <160","No indication."]],
+   x:"Without reperfusion or a comorbid indication, treating BP <220/120 in the first 48–72 h does not help.",refs:["bp.noReperf"]},
+  {q:"Before the first DAPT doses, what is required?",topics:["unit"],
+   o:[["A bedside swallow screen",""],
+      ["Nothing; the stroke is mild","Screen before any liquid or food."],
+      ["Videofluoroscopy for every stroke patient","Instrumental testing is for failed or impossible screens."],
+      ["Place an NG tube and give drugs through it","Screen first."]],
+   x:"Bedside swallow screen before any liquid or food intake (COR 1).",refs:["unit.dysScreen","unit.instrumental"]},
+  {q:"Before discharge, which is recommended?",topics:["unit"],
+   o:[["Screen for post-stroke depression with a structured inventory",""],
+      ["An SSRI to boost motor recovery","SSRIs for motor recovery are 3: No Benefit (LOE A)."],
+      ["Prophylactic antiseizure medication","3: No Benefit."],
+      ["Stop clopidogrel at discharge","Continue DAPT for the full 21 days."]],
+   x:"Routine structured depression screening is Class 1; treat when diagnosed.",refs:["unit.depression","unit.ssri"]}]},
+{id:"t4-rural",tier:4,title:"Telestroke at a critical access hospital",topics:["sys","ivt","bridge","ac"],
+ vig:"A critical access hospital with no neurologist on site. A 76-year-old man with atrial fibrillation, not anticoagulated, has sudden left hemiparesis and neglect. CT shows no hemorrhage.",
+ vit:[["LKW","1 h 40 min"],["NIHSS","15"],["INR","1.0"]],
+ steps:[
+  {q:"How should the IVT decision be made?",topics:["sys"],
+   o:[["Telestroke consultation for IVT decision-making and delivery",""],
+      ["Transfer first and let the receiving center decide","Delays treatment."],
+      ["Wait for the radiologist's final read in the morning","Teleradiology is recommended for timely review."],
+      ["The ED physician decides alone without consultation","Telestroke is Class 1 where expertise is absent."]],
+   x:"Telestroke (COR 1, B-R) and teleradiology (COR 1, B-NR) where on-site expertise is lacking.",refs:["sys.tele","sys.telerad"]},
+  {q:"Tenecteplase is given 52 minutes after arrival. CTA shows a right M1 occlusion. Next?",topics:["ivt","bridge","sys"],
+   o:[["Transfer immediately for EVT; don't wait for a response to IVT",""],
+      ["Observe for an hour and transfer only if there is no improvement","Don't observe for response."],
+      ["Repeat CT at 24 h first","Delays EVT."],
+      ["Add eptifibatide to boost lysis","Class 3: No Benefit."]],
+   x:"Rapid transfer under DIDO protocols, without waiting for IVT response.",refs:["bridge.ivtFirst","sys.dido","bridge.eptifibatide"]},
+  {q:"After successful EVT, on day 3 the infarct is small, there is no hemorrhage and NIHSS is 2. Anticoagulation?",topics:["ac"],
+   o:[["An early DOAC start is reasonable",""],
+      ["Wait 14 days","Early is reasonable in milder strokes."],
+      ["IV heparin bolus now","Not recommended."],
+      ["Aspirin only, indefinitely","AF warrants anticoagulation."]],
+   x:"Early oral anticoagulation is low risk and reasonable in carefully selected, milder AF-related strokes (2a, A).",refs:["ac.early"]}]},
+{id:"t4-ivt-shift",tier:4,title:"One thrombolysis shift",topics:["ivt","agent","contra","apt"],
+ vig:"A 61-year-old schoolbus driver, 74 kg, takes lisinopril. At 1 h 20 min she has isolated left facial droop plus left arm drift that she cannot hold up against gravity. CT is negative; CTA shows no LVO.",
+ vit:[["LKW","1 h 20 min"],["Weight","74 kg"],["NIHSS","3"],["BP","172/94"]],
+ steps:[
+  {q:"Is this deficit disabling?",topics:["ivt"],
+   o:[["Yes; weakness limiting sustained effort against gravity is listed as clearly disabling",""],
+      ["No; NIHSS 3 is minor","Table 4 judges deficits, not the total score."],
+      ["No; facial droop alone is never disabling","She also has arm weakness against gravity."],
+      ["Only after CT perfusion","Not needed."]],
+   x:"Table 4: any weakness limiting sustained effort against gravity (≥2 on NIHSS motor) is typically disabling.",refs:["ivt.table4","ivt.disabling"]},
+  {q:"Tenecteplase dose?",topics:["agent"],
+   o:[["20 mg (4 mL)",""],
+      ["18.5 mg, calculated exactly","Table 7 bands: 70 to <80 kg is 20 mg."],
+      ["17.5 mg (3.5 mL)","That's 60 to <70 kg."],
+      ["25 mg","That's ≥90 kg."]],
+   x:"70–<80 kg band: 20 mg (4 mL).",refs:["agent.table7"]},
+  {q:"Twenty minutes later her tongue and lips swell. She is speaking clearly.",topics:["contra"],
+   o:[["Hold lisinopril; methylprednisolone, diphenhydramine and an H2 blocker; close airway watch",""],
+      ["Immediate intubation","May be unnecessary when limited to anterior tongue and lips."],
+      ["Fresh frozen plasma","Not the first-line Table 6 steps."],
+      ["Ignore; it resolves on its own","Treat and monitor the airway."]],
+   x:"Table 6 orolingual angioedema management.",refs:["contra.angioedema"]},
+  {q:"Next morning: when can she start aspirin?",topics:["apt"],
+   o:[["After the 24-h follow-up CT or MRI excludes hemorrhage",""],
+      ["She should have started IV aspirin with the TNK","IV aspirin with or within 90 min of IVT is 3: Harm."],
+      ["After 2 weeks","Aspirin within 48 h is Class 1."],
+      ["Never after thrombolysis","Aspirin is standard after the 24-h scan."]],
+   x:"Table 7: follow-up imaging at 24 h before antiplatelets; aspirin within 48 h of onset is Class 1.",refs:["agent.monitor","apt.aspirin","apt.ivAspirin"]}]}
+];
+
+// normalize single-step items
+ITEMS.forEach(it=>{ if(!it.steps){ it.steps=[{q:it.q,o:it.o,a:it.a||0,x:it.x,refs:it.refs,topics:it.topics}]; }
+  it.steps.forEach(s=>{ s.a=s.a||0; s.topics=s.topics||it.topics; }); });
+const BYID=Object.fromEntries(ITEMS.map(i=>[i.id,i]));
+const TIERS={1:{name:"Foundations",d:"One guideline, direct application"},2:{name:"Applied",d:"One guideline, with the nuance that trips people up"},3:{name:"Interacting",d:"Two guidelines in the same patient"},4:{name:"Full pathway",d:"Multi-step cases across the whole guideline"}};
+const UNLOCK={1:6,2:5,3:4}; const UNLOCK_ACC=0.7;
+const REASONS=["Didn't know the criterion or threshold","Applied the older 2018/2019 rule","Misread the vignette","Mixed up two similar recommendations","Guessed"];
+const INTERVALS=[10*60e3, 864e5, 3*864e5, 7*864e5, 16*864e5, 35*864e5];
+
+/* ===================== STATE ===================== */
+const LSKEY="penumbra-v1";
+const SESSION_GAP=30*60e3; // a sitting ends after 30 minutes without an answer
+function freshState(){return {v:2,updatedAt:0,topics:{},items:{},history:[],tiers:{1:{n:0,recent:[]},2:{n:0,recent:[]},3:{n:0,recent:[]},4:{n:0,recent:[]}},reasons:{},settings:{lambda:1.5,confPenalty:true,unlockAll:false,goal:3,commitFirst:false},totals:{steps:0,correct:0},days:{},sessions:0,lastActive:0};}
+function dayKey(t){const d=new Date(t); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function normalize(raw){
+  const s=Object.assign(freshState(),raw||{});
+  s.settings=Object.assign(freshState().settings,(raw&&raw.settings)||{});
+  const hist=s.history||[];
+  if(!raw||!raw.days){ // backfill: completed cases per day, judged against the 1-case pace used before goals existed
+    s.days={};
+    hist.forEach(h=>{const it=BYID[h.id]; if(it&&h.step===it.steps.length-1){const k=dayKey(h.t); const d=s.days[k]||(s.days[k]={n:0,goal:1}); d.n++;}});
+  }
+  if(!raw||raw.sessions==null){ // backfill: count sittings from answer timestamps and when each area was last practiced
+    let n=0,last=0;
+    hist.forEach(h=>{ if(h.t-last>SESSION_GAP) n++; last=h.t; const it=BYID[h.id]; const st=it&&it.steps[h.step]; if(st) st.topics.forEach(t=>{ if(s.topics[t]) s.topics[t].ls=n; }); });
+    s.sessions=n; s.lastActive=last;
+  }
+  return s;
+}
+let S=freshState();
+try{const raw=localStorage.getItem(LSKEY); if(raw){S=normalize(JSON.parse(raw));}}catch(e){}
+const session={answered:0,correct:0,streak:0,relearn:[],remediation:{},remTier:4,lastId:null,recent:[],forced:null,practice:false};
+let remote=null; // {ref}
+let saveTimer=null, writing=Promise.resolve();
+function save(){
+  S.updatedAt=Date.now();
+  try{localStorage.setItem(LSKEY,JSON.stringify(S));}catch(e){}
+  if(!remote) return;
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{ const body={state:JSON.stringify(S),updatedAt:S.updatedAt};
+    writing=writing.then(()=>remote.ref.set(body)).then(()=>setSync("Synced to your account")).catch(e=>{ if(e&&e.code==="invalid_argument"){remote=null;setSync("Saved in this browser");} else setSync("Sync paused, saved in this browser"); }); },900);
+}
+function setSync(t){const el=document.getElementById("sync"); if(el) el.textContent=t;}
+
+/* ===================== ENGINE ===================== */
+const CREDIT={guess:0.5,fair:0.85,cert:1};
+function tstate(t){return S.topics[t]||(S.topics[t]={c:0,wg:0,wf:0,wc:0,n:0,k:0,last:0});}
+function mastery(t){const s=S.topics[t]; if(!s||!s.n) return null; const L=S.settings.lambda, k=S.settings.confPenalty?1.5:1;
+  const w=0.7*s.wg+s.wf+k*s.wc; return s.c/(s.c+L*w+1);}
+function zone(m){return m==null?"none":m<0.4?"core":m<0.7?"pen":"perf";}
+const ZLBL={none:"Not yet imaged",core:"Core gap",pen:"Penumbra",perf:"Perfused"};
+/* Session-based fading (internal only): after FADE_FREE sittings without practice in an area,
+   its working mastery for case selection drops by (1-FADE) per sitting. Displayed bars are unchanged. */
+const FADE_FREE=2, FADE=0.94;
+function touchSession(){const now=Date.now(); if(!S.lastActive||now-S.lastActive>SESSION_GAP) S.sessions=(S.sessions||0)+1; S.lastActive=now;}
+function staleSessions(t){const s=S.topics[t]; if(!s||s.ls==null) return 0; return Math.max(0,(S.sessions||0)-s.ls);}
+function effMastery(t){const m=mastery(t); if(m==null) return null; return m*Math.pow(FADE,Math.max(0,staleSessions(t)-FADE_FREE));}
+/* Daily goal and streak */
+function todayKey(){return dayKey(Date.now());}
+function met(d){return !!d && d.n>=(d.goal||1);}
+function dayStreak(){const d=new Date(); if(!met(S.days[dayKey(d)])) d.setDate(d.getDate()-1); let n=0; while(met(S.days[dayKey(d)])){n++; d.setDate(d.getDate()-1);} return n;}
+function bestStreak(){let best=0,run=0,prev=null; Object.keys(S.days).filter(k=>met(S.days[k])).sort().forEach(k=>{ if(prev){const p=new Date(prev+"T12:00:00"); p.setDate(p.getDate()+1); run=dayKey(p)===k?run+1:1;} else run=1; best=Math.max(best,run); prev=k;}); return best;}
+function last7(){const out=[], d=new Date(); d.setDate(d.getDate()-6); for(let i=0;i<7;i++){const k=dayKey(d); out.push({k,lbl:d.toLocaleDateString([], {weekday:"narrow"}),rec:S.days[k],today:i===6}); d.setDate(d.getDate()+1);} return out;}
+/* Commit-first: optional, then permanent once every case has been seen */
+function seenCount(){return ITEMS.filter(i=>S.items[i.id]&&S.items[i.id].seen>0).length;}
+function allSeen(){return seenCount()===ITEMS.length;}
+function commitMode(){return !!S.settings.commitFirst||allSeen();}
+function recordStep(it,st,ok,conf){
+  st.topics.forEach(t=>{const s=tstate(t); s.c*=0.9; s.wg*=0.9; s.wf*=0.9; s.wc*=0.9; s.n++; s.last=Date.now(); s.ls=S.sessions;
+    if(ok){s.c+=CREDIT[conf]; s.k++;} else { if(conf==="guess")s.wg+=1; else if(conf==="fair")s.wf+=1; else s.wc+=1; } });
+  const tr=S.tiers[it.tier]; tr.n++; tr.recent.push(ok?1:0); if(tr.recent.length>8) tr.recent.shift();
+  S.totals.steps++; if(ok)S.totals.correct++;
+}
+function recordItem(it,allOk,conf){
+  const now=Date.now(); const r=S.items[it.id]||(S.items[it.id]={box:0,due:0,seen:0,lapses:0});
+  r.seen++; r.last=now;
+  if(!allOk){r.box=0; r.lapses++; r.due=now+INTERVALS[0];}
+  else if(conf==="guess"){r.due=now+(r.box===0?INTERVALS[0]:INTERVALS[r.box]/2);}
+  else {r.box=Math.min(5,r.box+1); r.due=now+INTERVALS[r.box];}
+}
+function tierAcc(t){const r=S.tiers[t].recent; return r.length?r.reduce((a,b)=>a+b,0)/r.length:0;}
+function unlockedTier(){ if(S.settings.unlockAll) return 4; let t=S.maxTier||1; while(t<4 && S.tiers[t].n>=UNLOCK[t] && tierAcc(t)>=UNLOCK_ACC) t++; if(t>(S.maxTier||1)) S.maxTier=t; return t; }
+function pickNext(){
+  const now=Date.now(), maxT=unlockedTier();
+  if(session.forced){const it=BYID[session.forced]; session.forced=null; if(it) return serve(it,"retry");}
+  // interleaving: topics of the last two cases served
+  const lastT=new Set((BYID[session.recent[0]]||{topics:[]}).topics), prevT=new Set((BYID[session.recent[1]]||{topics:[]}).topics);
+  const ready=session.relearn.find(r=>r.wait<=0 && r.id!==session.lastId && !BYID[r.id].topics.some(t=>lastT.has(t)));
+  if(ready){ session.relearn=session.relearn.filter(r=>r!==ready); return serve(BYID[ready.id],"relearn"); }
+  let best=null,bs=-1e9,bestTag="";
+  for(const it of ITEMS){
+    if(it.tier>maxT || it.id===session.lastId || session.relearn.some(r=>r.id===it.id)) continue;
+    const r=S.items[it.id]; let s=0, tag="new";
+    if(it.topics.some(t=>lastT.has(t))) s-=30; if(it.topics.some(t=>prevT.has(t))) s-=15;
+    if(r&&r.seen){ if(r.due>now && !session.practice) continue; tag="review"; s+= r.due<=now ? 30+Math.min(20,(now-r.due)/36e5) : 0; if(session.practice) s+=8*r.lapses; }
+    else s+=22;
+    const gaps=it.topics.map(t=>{const m=effMastery(t); return m==null?0.55:1-m;}); s+=40*gaps.reduce((a,b)=>a+b,0)/gaps.length;
+    if(it.topics.some(t=>session.remediation[t]>0)){ s+=35; if(it.tier<=session.remTier) s+=10; tag="remediation"; }
+    if(it.tier===maxT) s+=14; else if(it.tier===maxT-1) s+=6;
+    s+=Math.random()*6;
+    if(s>bs){bs=s;best=it;bestTag=tag;}
+  }
+  if(best) return serve(best,bestTag);
+  if(session.relearn.length){ const r=session.relearn.shift(); return serve(BYID[r.id],"relearn"); }
+  return null;
+}
+function serve(it,tag){
+  session.relearn.forEach(r=>r.wait--);
+  it.topics.forEach(t=>{ if(session.remediation[t]>0) session.remediation[t]--; });
+  session.lastId=it.id; session.recent.unshift(it.id); session.recent.length=Math.min(session.recent.length,3);
+  return {item:it,tag};
+}
+function nextDue(){let m=Infinity; const maxT=unlockedTier(); for(const it of ITEMS){ if(it.tier>maxT) continue; const r=S.items[it.id]; if(!r||!r.seen) return 0; m=Math.min(m,r.due);} return m;}
+
+/* ===================== UI ===================== */
+const app=document.getElementById("app");
+let tab="train", cur=null;
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function shuffle(n){const a=[...Array(n).keys()]; for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;}
+function pct(m){return m==null?"—":Math.round(m*100)+"%";}
+function corBadge(c){return `<span class="cor ${CORCLS[c]}">${esc(CORLBL[c])}</span>`;}
+function secLbl(s){return /^Table/.test(s)?s:"§"+s;}
+function recHtml(id){const r=RECS[id]; if(!r) return ""; return `<div class="rec">${corBadge(r[1])}<div>${esc(r[4])}<div class="sec">${esc(secLbl(r[3]))}${r[2]!=="—"?" · LOE "+esc(r[2]):""} · ${esc(TOPIC[r[0]].name)}</div></div></div>`;}
+
+function startItem(){
+  const p=pickNext();
+  if(!p){cur=null; return;}
+  cur={item:p.item,tag:p.tag,step:0,orders:p.item.steps.map(s=>shuffle(s.o.length)),choice:null,conf:null,submitted:false,results:[],before:{},reflect:null,needReflect:false,commit:"",revealed:false};
+}
+function reveal(){ if(!cur||cur.revealed||cur.commit.trim().length<2) return; cur.revealed=true; render(); }
+function overall(){let sum=0; TOPICS.forEach(t=>{const m=mastery(t.id); sum+=m||0;}); return sum/TOPICS.length;}
+
+function renderSide(){
+  const maxT=unlockedTier(); const ov=overall();
+  const rows=TOPICS.map(t=>{const m=mastery(t.id), z=zone(m); return {t,m,z};}).sort((a,b)=>(a.m==null)-(b.m==null)||(a.m??1)-(b.m??1));
+  const G=S.settings.goal, td=S.days[todayKey()]||{n:0}, n=td.n, streak=dayStreak(), best=bestStreak();
+  const th=S.history.filter(h=>dayKey(h.t)===todayKey()), tacc=th.length?Math.round(100*th.filter(h=>h.ok).length/th.length)+"%":"—";
+  const msg=n>=G?"Goal met. Extra cases still count toward mastery.":streak>0?`${G-n} more to make it ${streak+(met(td)?0:1)} days in a row`:`${G-n} more to start a streak`;
+  return `<aside class="side">
+   <div class="panel"><h2>Today</h2><p class="sub">Daily goal: ${G} case${G>1?"s":""}</p>
+    <div class="big"><b>${n}/${G}</b><span>cases done</span></div>
+    <div class="goalbar"><i style="width:${Math.min(100,100*n/G)}%"></i></div>
+    <div class="week" aria-label="Last 7 days">${last7().map(d=>`<span class="${d.today?"today":""}" title="${esc(d.k)}: ${d.rec?d.rec.n:0} case${d.rec&&d.rec.n===1?"":"s"}"><i class="${met(d.rec)?"met":d.rec&&d.rec.n?"part":""}"></i>${esc(d.lbl)}</span>`).join("")}</div>
+    <div class="stats"><div><b>${streak}</b><span>day streak</span></div><div><b>${best}</b><span>best streak</span></div><div><b>${tacc}</b><span>correct today</span></div></div>
+    <p class="hint" style="margin:10px 0 0">${esc(msg)}</p>
+   </div>
+   <div class="panel"><h2>Knowledge perfusion</h2><p class="sub">Penalty-weighted mastery across all ${TOPICS.length} guideline areas</p>
+    <div class="big"><b>${Math.round(ov*100)}%</b><span>${TOPICS.filter(t=>mastery(t.id)!=null).length}/${TOPICS.length} areas imaged</span></div>
+    <div class="pmap" style="margin-top:12px">${rows.map(r=>`<div class="prow" title="${esc(ZLBL[r.z])}"><span class="nm">${esc(r.t.name)}</span><span class="track"><span class="tick" style="left:40%"></span><span class="tick" style="left:70%"></span>${r.m!=null?`<i class="z-${r.z}" style="width:${Math.max(3,r.m*100)}%"></i>`:""}</span><span class="pv">${pct(r.m)}</span></div>`).join("")}</div>
+    <div class="legend"><span><i class="z-core"></i>Core gap &lt;40%</span><span><i class="z-pen"></i>Penumbra</span><span><i class="z-perf"></i>Perfused ≥70%</span></div>
+   </div>
+   <div class="panel"><h2>Case complexity</h2><p class="sub">Unlock a tier with ${Math.round(UNLOCK_ACC*100)}% recent accuracy below it</p>
+    <div class="ladder">${[1,2,3,4].map(t=>{const open=t<=maxT; let prog=""; if(t===maxT&&t<4&&!S.settings.unlockAll){const need=UNLOCK[t], n=S.tiers[t].n, acc=tierAcc(t); const f=Math.min(1,n/need)*0.5+Math.min(1,acc/UNLOCK_ACC)*0.5; prog=`<div class="d">${Math.min(n,need)}/${need} answered · ${Math.round(acc*100)}% recent</div><div class="mini"><i style="width:${Math.round(f*100)}%"></i></div>`;}
+      return `<div class="rung ${open?"open":""}"><span class="n">${t}</span><div><div class="t">${esc(TIERS[t].name)}${open?"":" · locked"}</div><div class="d">${esc(TIERS[t].d)}</div>${prog}</div></div>`;}).join("")}</div>
+   </div>
+  </aside>`;
+}
+
+function renderTrain(){
+  if(!cur) startItem();
+  let main;
+  if(!cur){
+    const d=nextDue();
+    main=`<section class="case"><div class="chips"><span class="chip">Caught up</span></div><h1 class="ctitle">Nothing is due at this tier</h1>
+      <p class="vig">You have seen every case unlocked so far, and none is due for review yet.${d&&d!==Infinity?` Next review: ${esc(new Date(d).toLocaleString([], {weekday:"short",hour:"numeric",minute:"2-digit"}))}.`:""}</p>
+      <div class="actions"><button class="btn" data-act="practice">Keep practicing my weakest areas</button><button class="btn ghost" data-go="progress">See progress</button></div></section>`;
+  } else main=caseHtml();
+  const flash=session.flash?`<div class="flash" role="status">${esc(session.flash)}</div>`:""; session.flash=null;
+  app.innerHTML=`<div class="train"><div class="mainc">${flash}${main}</div>${renderSide()}</div>`;
+}
+function caseHtml(){
+  const it=cur.item, st=it.steps[cur.step], ord=cur.orders[cur.step];
+  const tagChip=cur.tag==="review"?`<span class="chip review">Spaced review</span>`:cur.tag==="relearn"||cur.tag==="retry"?`<span class="chip rem">Missed earlier</span>`:cur.tag==="remediation"?`<span class="chip rem">Targets a recent gap</span>`:`<span class="chip">New case</span>`;
+  const nT=it.topics.length;
+  const steps=it.steps.length>1?`<div class="stepbar" aria-label="Step ${cur.step+1} of ${it.steps.length}">${it.steps.map((s,i)=>`<i class="${i<cur.step?(cur.results[i]?"done":"bad"):i===cur.step?(cur.submitted?(cur.results[i]?"done":"bad"):"now"):""}"></i>`).join("")}</div>`:"";
+  const opts=ord.map((oi,k)=>{const o=st.o[oi]; let cls="", why="";
+     if(cur.submitted){ if(oi===st.a) cls="right"; else if(oi===cur.choice) cls="wrong"; if((oi===cur.choice||oi===st.a)&&o[1]) why=`<span class="why">${esc(o[1])}</span>`; }
+     return `<button class="opt ${cls}" role="radio" aria-checked="${cur.choice===oi}" data-opt="${oi}" ${cur.submitted?"disabled":""}><span class="k">${k+1}</span><span>${esc(o[0])}${why}</span></button>`;}).join("");
+  const gate=commitMode()&&!cur.revealed&&!cur.submitted;
+  if(gate) return `<section class="case" aria-live="polite">
+    <div class="chips"><span class="chip tier">Tier ${it.tier} · ${esc(TIERS[it.tier].name)}</span>${tagChip}<span class="chip">Commit first</span></div>
+    <h1 class="ctitle">${esc(it.title)}</h1>
+    ${it.vig?`<p class="vig">${esc(it.vig)}</p>`:""}
+    ${it.vit?`<dl class="vitals">${it.vit.map(v=>`<div><dt>${esc(v[0])}</dt><dd>${esc(v[1])}</dd></div>`).join("")}</dl>`:""}
+    ${steps}
+    <p class="q">${it.steps.length>1?`<span class="chip" style="margin-right:8px">Step ${cur.step+1}/${it.steps.length}</span>`:""}${esc(st.q)}</p>
+    <div class="commit"><label for="commitTxt" class="lbl">Your answer, before you see the options</label>
+      <textarea id="commitTxt" rows="2" placeholder="A few words is enough">${esc(cur.commit)}</textarea>
+      <div class="actions"><button class="btn" data-act="reveal" ${cur.commit.trim().length<2?"disabled":""}>Show options</button><span class="hint">Not graded. It stays on screen so you can compare it with the guideline answer.</span></div></div>
+  </section>`;
+  const committed=cur.revealed&&cur.commit.trim()?`<div class="committed"><span class="lbl">You committed to</span><p>${esc(cur.commit.trim())}</p></div>`:"";
+  const conf=cur.submitted?"":`<div class="conf"><span class="lbl">How sure are you?</span><span class="seg" role="radiogroup" aria-label="Confidence">${[["guess","Guessing"],["fair","Fairly sure"],["cert","Certain"]].map(([v,l])=>`<button role="radio" aria-checked="${cur.conf===v}" data-conf="${v}">${l}</button>`).join("")}</span></div>
+     <div class="actions"><button class="btn" data-act="submit" ${cur.choice==null||!cur.conf?"disabled":""}>Check answer</button><span class="hint">${cur.choice==null?"Pick an answer":!cur.conf?"Rate your confidence to continue":"Enter to check"}</span></div>`;
+  return `<section class="case" aria-live="polite">
+    <div class="chips"><span class="chip tier">Tier ${it.tier} · ${esc(TIERS[it.tier].name)}</span>${tagChip}<span class="chip">${cur.submitted?it.topics.map(t=>esc(TOPIC[t].name)).join(" · "):nT+" guideline area"+(nT>1?"s":"")}</span></div>
+    <h1 class="ctitle">${esc(it.title)}</h1>
+    ${it.vig?`<p class="vig">${esc(it.vig)}</p>`:""}
+    ${it.vit?`<dl class="vitals">${it.vit.map(v=>`<div><dt>${esc(v[0])}</dt><dd>${esc(v[1])}</dd></div>`).join("")}</dl>`:""}
+    ${steps}
+    <p class="q">${it.steps.length>1?`<span class="chip" style="margin-right:8px">Step ${cur.step+1}/${it.steps.length}</span>`:""}${esc(st.q)}</p>
+    ${committed}
+    <div class="opts" role="radiogroup" aria-label="Answers">${opts}</div>
+    ${conf}${cur.submitted?feedbackHtml():""}
+  </section>`;
+}
+function feedbackHtml(){
+  const it=cur.item, st=it.steps[cur.step], ok=cur.results[cur.step];
+  const deltas=st.topics.map(t=>{const b=cur.before[t], a=mastery(t); const d=Math.round(((a||0)-(b||0))*100); return `<span class="delta">${esc(TOPIC[t].name)} <span class="${d>=0?"up":"dn"}">${d>=0?"+":""}${d}</span> → ${pct(a)}</span>`;}).join("");
+  const last=cur.step===it.steps.length-1;
+  const reflect=!ok?`<div class="reflect"><p>What tripped you up? This shapes your next cases.</p><div class="rs" role="radiogroup">${REASONS.map((r,i)=>`<button role="radio" aria-checked="${cur.reflect===i}" data-reason="${i}">${esc(r)}</button>`).join("")}</div></div>`:"";
+  const guessNote=ok&&cur.conf==="guess"?`<p class="hint">Correct, but you were guessing, so this earns partial credit and comes back sooner.</p>`:"";
+  return `<div class="fb">
+    <div class="verdict ${ok?"ok":"no"}">${ok?"Correct":"Not quite"}</div>
+    <p class="explain">${esc(st.x)}</p>${guessNote}
+    <div class="recs">${(st.refs||[]).map(recHtml).join("")}</div>
+    <div class="deltas">${deltas}</div>
+    ${reflect}
+    <div class="actions"><button class="btn" data-act="next" ${!ok&&cur.reflect==null?"disabled":""}>${last?"Next case":"Next step"}</button>${!ok&&cur.reflect==null?`<span class="hint">Choose a reason to continue</span>`:""}</div>
+  </div>`;
+}
+function submit(){
+  if(!cur||cur.submitted||cur.choice==null||!cur.conf) return;
+  const it=cur.item, st=it.steps[cur.step]; const ok=cur.choice===st.a;
+  cur.before={}; st.topics.forEach(t=>cur.before[t]=mastery(t));
+  touchSession();
+  recordStep(it,st,ok,cur.conf);
+  cur.results[cur.step]=ok; cur.submitted=true; cur.confs=(cur.confs||[]); cur.confs[cur.step]=cur.conf;
+  session.answered++; if(ok){session.correct++;session.streak++;} else {session.streak=0; st.topics.forEach(t=>session.remediation[t]=2); session.remTier=it.tier;}
+  const h={t:Date.now(),id:it.id,step:cur.step,ok,conf:cur.conf,choice:cur.choice,reason:null}; if(cur.revealed&&cur.commit.trim()) h.commit=cur.commit.trim().slice(0,240);
+  S.history.push(h);
+  if(S.history.length>400) S.history.splice(0,S.history.length-400);
+  save(); render();
+}
+function next(){
+  const it=cur.item, st=it.steps[cur.step];
+  if(!cur.results[cur.step]){ if(cur.reflect==null) return; S.reasons[cur.reflect]=(S.reasons[cur.reflect]||0)+1; const h=S.history[S.history.length-1]; if(h) h.reason=cur.reflect; }
+  if(cur.step<it.steps.length-1){ cur.step++; cur.choice=null; cur.conf=null; cur.submitted=false; cur.reflect=null; cur.commit=""; cur.revealed=false; save(); render(); window.scrollTo({top:0,behavior:"smooth"}); return; }
+  const allOk=cur.results.every(Boolean); const worst=cur.confs.includes("guess")?"guess":cur.confs.includes("fair")?"fair":"cert";
+  recordItem(it,allOk,worst);
+  const k=todayKey(), d=S.days[k]||(S.days[k]={n:0,goal:S.settings.goal}); const was=met(d); d.goal=S.settings.goal; d.n++;
+  if(!was&&met(d)){ const s=dayStreak(); session.flash=`Daily goal met · ${s} day${s>1?"s":""} in a row`; }
+  if(allSeen()&&!S.commitForcedNoted){ S.commitForcedNoted=true; session.flash=(session.flash?session.flash+" · ":"")+"You've seen every case, so commit-first is now always on"; }
+  if(!allOk && !session.relearn.some(r=>r.id===it.id)) session.relearn.push({id:it.id,wait:3});
+  save(); cur=null; render(); window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function renderProgress(){
+  const tot=S.totals, rows=TOPICS.map(t=>{const s=S.topics[t.id]; const m=mastery(t.id); return {t,s,m,z:zone(m)};});
+  rows.sort((a,b)=>(a.m==null)-(b.m==null)||(a.m??1)-(b.m??1));
+  const gaps=rows.filter(r=>r.z==="core").length;
+  const misses=S.history.filter(h=>!h.ok).slice(-30).reverse();
+  const rmax=Math.max(1,...REASONS.map((r,i)=>S.reasons[i]||0));
+  app.innerHTML=`<div class="page">
+   <h2 class="ph">Progress</h2>
+   <div class="summary">
+     <div class="tile"><b>${Math.round(overall()*100)}%</b><span>Knowledge perfusion (all ${TOPICS.length} areas)</span></div>
+     <div class="tile"><b>${rows.filter(r=>r.m!=null).length}/${TOPICS.length}</b><span>Areas assessed</span></div>
+     <div class="tile"><b>${gaps}</b><span>Core gaps (&lt;40%)</span></div>
+     <div class="tile"><b>${tot.steps?Math.round(100*tot.correct/tot.steps)+"%":"—"}</b><span>${tot.steps} answers all time</span></div>
+     <div class="tile"><b>×${S.settings.lambda.toFixed(2)}</b><span>Error penalty factor</span></div>
+   </div>
+   <div class="tablewrap"><table><thead><tr><th>Guideline area</th><th>Status</th><th>Mastery</th><th>Answers</th><th>Correct</th><th>Section</th><th></th></tr></thead><tbody>
+    ${rows.map(r=>`<tr><td>${esc(r.t.name)}</td><td><span class="pill ${r.z}">${ZLBL[r.z]}</span></td><td class="num">${pct(r.m)}</td><td class="num">${r.s?r.s.n:0}</td><td class="num">${r.s&&r.s.n?Math.round(100*r.s.k/r.s.n)+"%":"—"}</td><td class="num">${esc(r.t.sec)}</td><td><button class="linkbtn" data-drill="${r.t.id}">Drill</button></td></tr>`).join("")}
+   </tbody></table></div>
+   <div class="two">
+    <div class="panel"><h2>Why answers went wrong</h2><p class="sub">From your reflection after each miss</p>
+      ${REASONS.some((r,i)=>S.reasons[i])?REASONS.map((r,i)=>`<div class="rbar"><span>${esc(r)}</span><span class="track"><i class="z-core" style="width:${100*(S.reasons[i]||0)/rmax}%"></i></span><span class="pv">${S.reasons[i]||0}</span></div>`).join(""):`<p class="empty">No misses recorded yet.</p>`}
+    </div>
+    <div class="panel"><h2>How the score works</h2><p class="sub">Per guideline area, recent answers count more (each new answer decays older evidence by 10%)</p>
+      <div class="formula">mastery = C ÷ (C + λ·E + 1)</div>
+      <p class="note">C sums credit for correct answers (1 if certain, 0.85 fairly sure, 0.5 guessing). E sums errors (0.7 if guessing, 1 fairly sure, ${S.settings.confPenalty?"1.5":"1"} if certain). λ is your penalty factor, currently ${S.settings.lambda.toFixed(2)}. The +1 keeps a single lucky answer from reading as mastery. Areas below 40% are core gaps and get priority in case selection.</p>
+      <p class="note">Case selection also discounts areas you haven't practiced recently. After ${FADE_FREE} sittings without a case in an area, its working mastery drops about ${Math.round((1-FADE)*100)}% per sitting, so it comes back sooner. A sitting ends after 30 minutes without an answer. The bars above always show your actual answers.</p>
+    </div>
+   </div>
+   <div><h2 class="ph" style="font-size:19px;margin-bottom:10px">Missed answers</h2>
+    <div class="log">${misses.length?misses.map(h=>{const it=BYID[h.id]; if(!it) return ""; const st=it.steps[h.step]; return `<div class="logi"><div class="m">${esc(new Date(h.t).toLocaleString([], {month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}))} · Tier ${it.tier} · ${esc(st.topics.map(t=>TOPIC[t].name).join(", "))}${h.reason!=null?" · "+esc(REASONS[h.reason]):""}</div>
+      <div><b>${esc(it.title)}</b>: ${esc(st.q)}</div>${h.commit?`<div>You committed to: <i>${esc(h.commit)}</i></div>`:""}<div>You chose: ${esc(st.o[h.choice][0])}</div><div>Guideline answer: ${esc(st.o[st.a][0])}</div><div style="margin-top:6px"><button class="linkbtn" data-retry="${it.id}">Retry this case</button></div></div>`;}).join(""):`<p class="empty">No missed answers yet. Missed cases also return automatically through spaced review.</p>`}</div>
+   </div>
+  </div>`;
+}
+function renderGuide(){
+  app.innerHTML=`<div class="page"><h2 class="ph">Guideline reference</h2>
+   <p class="note">Every recommendation used in the cases, grouped by area, checked against the recommendation tables and Tables 3–8 of the 2026 AHA/ASA Guideline for the Early Management of Patients With Acute Ischemic Stroke (Prabhakaran et al., <i>Stroke</i>. 2026;57:e316–e436; <a href="https://doi.org/10.1161/STR.0000000000000513" target="_blank" rel="noopener">doi:10.1161/STR.0000000000000513</a>). Wording is condensed; class (COR) and level of evidence (LOE) are as published. Table 8 entries are graded by the guideline's own color scale rather than a COR. "Guidelines in Action" links open the companion case reports in <i>Stroke</i>.</p>
+   <div class="legend" style="font-size:12.5px">${["1","2a","2b","3NB","3H","T8g","T8r","T8x","T"].map(c=>corBadge(c)).join(" ")}</div>
+   <div class="ggrid">${TOPICS.map(t=>{const m=mastery(t.id); const g=(GIA[t.id]||[]).map(x=>`<a href="https://doi.org/${x[1]}" target="_blank" rel="noopener">${esc(x[0])}</a>`).join(" · "); return `<section class="gtopic"><h3>${esc(t.name)}</h3><div class="s">${esc(t.sec)} · ${m==null?"not yet assessed":"mastery "+pct(m)}</div><div class="recs">${Object.keys(RECS).filter(k=>RECS[k][0]===t.id).map(recHtml).join("")}</div>${g?`<p class="note" style="margin:10px 0 0">Guidelines in Action: ${g}</p>`:""}</section>`;}).join("")}</div>
+  </div>`;
+}
+let confirmReset=false;
+function renderSettings(){
+  const forced=allSeen(), sc=seenCount();
+  app.innerHTML=`<div class="page"><h2 class="ph">Settings</h2>
+   <div class="panel">
+    <div class="setrow"><div><b>Daily goal</b><p>Cases to finish each day to keep your streak. A multi-step case counts once.</p></div><div><input type="range" id="goal" min="1" max="10" step="1" value="${S.settings.goal}" aria-label="Daily goal"> <span class="pv" id="gval">${S.settings.goal} case${S.settings.goal>1?"s":""}</span></div></div>
+    <div class="setrow"><div><b>Commit first</b><p>Type your answer before the options appear, then compare it with the guideline answer. ${forced?"Now permanent, because you've seen every case; this keeps familiar cases from turning into recognition practice.":`Becomes permanent once you've seen every case (${sc} of ${ITEMS.length} so far), so familiar cases don't turn into recognition practice.`}</p></div><button class="switch" id="commit" role="switch" aria-checked="${commitMode()}" aria-label="Commit first" ${forced?"disabled":""}></button></div>
+    <div class="setrow"><div><b>Error penalty factor (λ)</b><p>How heavily a wrong answer pulls an area's mastery down relative to a right one. Changing it rescores everything instantly.</p></div><div><input type="range" id="lambda" min="1" max="3" step="0.25" value="${S.settings.lambda}" aria-label="Penalty factor"> <span class="pv" id="lval">×${S.settings.lambda.toFixed(2)}</span></div></div>
+    <div class="setrow"><div><b>Penalize confident errors more</b><p>A wrong answer marked "Certain" counts 1.5× an ordinary error, because confidently held misconceptions are the riskiest at the bedside.</p></div><button class="switch" id="confpen" role="switch" aria-checked="${S.settings.confPenalty}" aria-label="Penalize confident errors"></button></div>
+    <div class="setrow"><div><b>Unlock all tiers</b><p>Skip the progression and draw multi-guideline cases right away.</p></div><button class="switch" id="unlockall" role="switch" aria-checked="${S.settings.unlockAll}" aria-label="Unlock all tiers"></button></div>
+    <div class="setrow"><div><b>Reset progress</b><p>Clears mastery, review schedule, streak, missed-answer log and reflections.</p></div><div class="actions">${confirmReset?`<button class="btn danger" data-act="reset">Erase everything</button><button class="btn ghost" data-act="cancelreset">Cancel</button>`:`<button class="btn ghost" data-act="askreset">Reset…</button>`}</div></div>
+   </div>
+   <p class="note">Progress saves automatically${remote?" to your account, so it follows you across devices":" in this browser"}. This is a study tool for learning the guideline, not clinical decision support; check the full guideline and local protocols in practice.</p>
+  </div>`;
+}
+function render(){
+  document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===tab));
+  if(tab==="train") renderTrain(); else if(tab==="progress") renderProgress(); else if(tab==="guide") renderGuide(); else renderSettings();
+}
+document.getElementById("tabs").addEventListener("click",e=>{const b=e.target.closest("button[data-tab]"); if(!b) return; tab=b.dataset.tab; confirmReset=false; render();});
+app.addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  if(b.dataset.opt!=null && cur && !cur.submitted){cur.choice=+b.dataset.opt; render(); return;}
+  if(b.dataset.conf && cur && !cur.submitted){cur.conf=b.dataset.conf; render(); return;}
+  if(b.dataset.reason!=null && cur){cur.reflect=+b.dataset.reason; render(); return;}
+  if(b.dataset.go){tab=b.dataset.go; render(); return;}
+  if(b.dataset.drill){const t=b.dataset.drill; session.remediation[t]=3; session.remTier=4; const cands=ITEMS.filter(i=>i.topics.includes(t)&&i.tier<=unlockedTier()); const pick=cands.sort((a,b)=>((S.items[a.id]?.seen?1:0)-(S.items[b.id]?.seen?1:0))||a.tier-b.tier)[0]; if(pick) session.forced=pick.id; cur=null; tab="train"; render(); return;}
+  if(b.dataset.retry){session.forced=b.dataset.retry; cur=null; tab="train"; render(); return;}
+  const a=b.dataset.act;
+  if(a==="reveal") reveal(); else if(a==="submit") submit(); else if(a==="next") next();
+  else if(a==="practice"){session.practice=true; cur=null; render();}
+  else if(a==="askreset"){confirmReset=true; render();} else if(a==="cancelreset"){confirmReset=false; render();}
+  else if(a==="reset"){const st=S.settings; S=freshState(); S.settings=st; Object.assign(session,{answered:0,correct:0,streak:0,relearn:[],remediation:{},lastId:null,recent:[],forced:null,practice:false}); cur=null; confirmReset=false; save(); render();}
+  if(b.id==="confpen"){S.settings.confPenalty=!S.settings.confPenalty; save(); render();}
+  if(b.id==="unlockall"){S.settings.unlockAll=!S.settings.unlockAll; save(); render();}
+  if(b.id==="commit"&&!allSeen()){S.settings.commitFirst=!S.settings.commitFirst; if(cur) cur.revealed=true; save(); render();}
+});
+app.addEventListener("input",e=>{
+  if(e.target.id==="lambda"){S.settings.lambda=+e.target.value; const l=document.getElementById("lval"); if(l) l.textContent="×"+S.settings.lambda.toFixed(2); save();}
+  if(e.target.id==="goal"){const g=+e.target.value; S.settings.goal=g; const d=S.days[todayKey()]; if(d) d.goal=g; const l=document.getElementById("gval"); if(l) l.textContent=g+" case"+(g>1?"s":""); save();}
+  if(e.target.id==="commitTxt"&&cur){cur.commit=e.target.value; const b=app.querySelector('[data-act="reveal"]'); if(b) b.disabled=cur.commit.trim().length<2;}
+});
+document.addEventListener("keydown",e=>{
+  if(e.target.id==="commitTxt"){ if(e.key==="Enter"&&!e.shiftKey){e.preventDefault(); reveal();} return; }
+  if(tab!=="train"||!cur||e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA"||e.metaKey||e.ctrlKey||e.altKey) return;
+  if(commitMode()&&!cur.revealed&&!cur.submitted) return;
+  const st=cur.item.steps[cur.step];
+  if(!cur.submitted && /^[1-9]$/.test(e.key)){const k=+e.key-1; if(k<st.o.length){cur.choice=cur.orders[cur.step][k]; render();}}
+  else if(e.key==="Enter"){ if(!cur.submitted) submit(); else if(cur.results[cur.step]||cur.reflect!=null) next(); }
+});
+render();
+
+/* ===================== ACCOUNT SYNC ===================== */
+(async()=>{
+  try{
+    if(!window.claude||!window.claude.use) return;
+    const [db,user]=await Promise.all([window.claude.use("db"),window.claude.use("user")]);
+    if(!db||!user) return;
+    const uid=await user.id(); if(!uid) return;
+    const ref=db.doc("data/users/"+uid+"/progress");
+    const snap=await ref.get();
+    remote={ref};
+    if(snap.exists){ const d=snap.data(); try{ const rs=JSON.parse(d.state); if((rs.updatedAt||0)>(S.updatedAt||0)){ S=normalize(rs); try{localStorage.setItem(LSKEY,JSON.stringify(S));}catch(e){} render(); } }catch(e){} setSync("Synced to your account"); }
+    else if(S.updatedAt){ save(); } else setSync("Synced to your account");
+  }catch(e){ remote=null; }
+})();
+</script>
+
+</body></html>
